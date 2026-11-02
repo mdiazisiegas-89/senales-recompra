@@ -26,6 +26,8 @@ jobs:
       - name: Generar señales
         id: gen
         continue-on-error: true
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
         run: python senales.py
       - name: Guardar en el repositorio
         run: |
