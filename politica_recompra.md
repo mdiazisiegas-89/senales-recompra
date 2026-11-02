@@ -1,7 +1,7 @@
 # POLÍTICA DE RECOMPRA — BTC y SOL
 
 - **Versión:** 1.0
-- **Aprobada por:** Miguel, el ____________ (fecha)
+- **Aprobada por:** Miguel, el ____2 de Noviembre del 2026________ (fecha)
 - **Entrada en vigor:** 7 días después de la fecha de aprobación (regla de la sección 9)
 - **Sustituye a:** v0.1 provisional, aprobada por chat el 30-oct-2026 sin documento escrito
 
@@ -35,8 +35,8 @@ documento público.
 **Este documento es público: no contiene importes.** El capital se define por referencia y
 los importes viven solo en el ledger privado de Chief of Staff.
 
-- **Capital de recompra del ciclo** = el USDC depositado en Jupiter Lend el día de entrada en
-  vigor de esta política, menos la reserva mínima intocable (10 % del patrimonio). Chief of
+- **Capital de recompra del ciclo** = el USDC de la wallet (en Jupiter Lend y líquido) el día de entrada en vigor
+de esta política, menos la reserva mínima intocable (10 % del patrimonio). Chief of
   Staff lo registra ese día como "capital inicial" y a partir de ahí descuenta lo ejecutado.
 - **Reparto por activo** (porcentaje del capital de recompra):
 
@@ -215,9 +215,10 @@ como paso previo y Miguel decide.
 
 | Versión | Fecha | Cambio | Motivo | En vigor desde |
 |---|---|---|---|---|
-| 1.0 | __________ | Versión inicial escrita y firmada. Define la regla de familia ACTIVA, que faltaba en la v0.1; define el retest y el rebote de RT4; escribe la interacción con el de-risk; define el objetivo del sistema (superar el valor de la posición de SOL vendida); incorpora HYPE, SUI y PUMP como activos cesta que siguen al tramo de SOL, con reparto por activo, techo relativo frente a BTC, familia de valoración propia para RT1–RT2, veto estructural y reducción por presión de oferta; el capital pasa a definirse por referencia para no publicar importes. No cambia los umbrales de P_final ni los porcentajes RT1–RT4 de la v0.1. | Sin la regla de familia, RT1 y RT3 no podían desbloquearse nunca; decisión de Miguel del 2-nov sobre la cesta y el objetivo. | Firma + 7 días |
+| 1.0 | ___2 noviembre 2026_______ | Versión inicial escrita y firmada. Define la regla de familia ACTIVA, que faltaba en la v0.1; define el retest y el rebote de RT4; escribe la interacción con el de-risk; define el objetivo del sistema (superar el valor de la posición de SOL vendida); incorpora HYPE, SUI y PUMP como activos cesta que siguen al tramo de SOL, con reparto por activo, techo relativo frente a BTC, familia de valoración propia para RT1–RT2, veto estructural y reducción por presión de oferta; el capital pasa a definirse por referencia para no publicar importes. No cambia los umbrales de P_final ni los porcentajes RT1–RT4 de la v0.1. | Sin la regla de familia, RT1 y RT3 no podían desbloquearse nunca; decisión de Miguel del 2-nov sobre la cesta y el objetivo. | Firma + 7 días |
 
 ---
 
 *Este documento es un marco de proceso propio de Miguel, no una recomendación de
 inversión ni asesoramiento financiero.*
+
