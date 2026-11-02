@@ -1,9 +1,9 @@
 # Señales 2026-11-02
 
-- Snapshot: `9ef4b8fbe1f9`
+- Snapshot: `dde3bdbcf240`
 - Estado: **PARCIAL**
-- Generado: 2026-11-02T10:53:49Z
-- Válido hasta: 2026-11-03T22:53:49Z
+- Generado: 2026-11-02T11:03:16Z
+- Válido hasta: 2026-11-03T23:03:16Z
 - Fallo `fred_DFII10`: ReadTimeout: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)
 - Fallo `fred_DGS10`: omitido: FRED no respondió en la serie anterior
 - Fallo `fred_DTWEXBGS`: omitido: FRED no respondió en la serie anterior
@@ -12,14 +12,7 @@
 
 ## Cambios desde el archivo anterior
 
-- btc.valoracion.MVRV Z < 0: SIN DATO → False
-- btc.valoracion.precio bajo realized price: SIN DATO → False
-- btc.capitulacion.NUPL < 0: SIN DATO → False
-- btc.capitulacion.LTH-SOPR < 1: SIN DATO → False
-- btc.capitulacion.Puell < 0,5: SIN DATO → False
-- btc.capitulacion.hash ribbons en capitulación: SIN DATO → False
-- btc.confirmacion.hash ribbons recuperadas en los últimos 30 días: SIN DATO → False
-- btc.pausa_activa: SIN DATO → False
+- pausa_sistema_activa: SIN DATO → False
 
 ## Cambios en los últimos 7 días
 
@@ -37,7 +30,7 @@ Sin archivo de referencia.
 | cierre_semanal_fecha | 2026-11-01 |
 | cierre_semanal_al_dia | True |
 | evento_4s_umbral_usd | 70321.57 |
-| pausa_activa | False |
+| pausa_sistema_activa | False |
 | semanas_desde_maximo | 56 |
 | caida_desde_maximo_pct | -36.74 |
 | rebote_desde_minimo_pct | 31.28 |
@@ -70,7 +63,7 @@ Sin archivo de referencia.
 | ultimo_cierre_anual_fecha | 2025-12-31 |
 | ultimo_cierre_anual_usd | 87516.98 |
 | var_anual_pct | -6.29 |
-| precio_kraken_contraste_usd | 77881.7 |
+| precio_kraken_contraste_usd | 77860.3 |
 
 ultimos_30_cierres_semanales: 2026-04-12 = 70685.37, 2026-04-19 = 73905.2, 2026-04-26 = 78538.77, 2026-05-03 = 78649.17, 2026-05-10 = 82256.78, 2026-05-17 = 77497.7, 2026-05-24 = 76950.99, 2026-05-31 = 73599.56, 2026-06-07 = 63158.25, 2026-06-14 = 65615.33, 2026-06-21 = 63365.44, 2026-06-28 = 59516.67, 2026-07-05 = 63619.88, 2026-07-12 = 63752.27, 2026-07-19 = 64653.05, 2026-07-26 = 65328.79, 2026-08-02 = 63445.68, 2026-08-09 = 64864.93, 2026-08-16 = 62818.41, 2026-08-23 = 77593.03, 2026-08-30 = 77689.19, 2026-09-06 = 80319.97, 2026-09-13 = 76759.26, 2026-09-20 = 81194.74, 2026-09-27 = 84392.47, 2026-10-04 = 86520.8, 2026-10-11 = 83636.61, 2026-10-18 = 81935.17, 2026-10-25 = 80038.91, 2026-11-01 = 78135.08
 
@@ -111,23 +104,14 @@ ultimos_10_cierres_anuales: 2016-12-31 = 968.97, 2017-12-31 = 13921.48, 2018-12-
 
 | Dato | Valor |
 |---|---|
-| funding_medio_7d_pct_hora | 0.00121791845 |
+| funding_medio_7d_pct_hora | 0.001218 |
 | funding_medio_7d_anualizado_pct | 10.7 |
-| funding_medio_14d_pct_hora | 0.0011665272 |
+| funding_medio_14d_pct_hora | 0.001167 |
 | horas_funding_negativo_7d | 2 |
-| open_interest_usd | 3146488511.0 |
+| open_interest_usd | 3144956268.0 |
 | oi_var_7d_pct | SIN DATO |
 | oi_var_30d_pct | SIN DATO |
 | fuente | Hyperliquid (un solo mercado, no agregado) |
-
-### Pausa
-
-| Dato | Valor |
-|---|---|
-| activa | False |
-| desde | SIN DATO |
-| cierres_seguidos_sobre_realized | SIN DATO |
-| ultimo_cierre_bajo_realized | False |
 
 ### Familia valoracion: 0 de 3 medibles (3 en total)
 
@@ -205,7 +189,7 @@ ultimos_10_cierres_anuales: 2016-12-31 = 968.97, 2017-12-31 = 13921.48, 2018-12-
 | cierre_semanal_fecha | 2026-11-01 |
 | cierre_semanal_al_dia | True |
 | evento_4s_umbral_usd | 84.83 |
-| pausa_activa | SIN DATO |
+| pausa_sistema_activa | False |
 | semanas_desde_maximo | 101 |
 | caida_desde_maximo_pct | -62.82 |
 | rebote_desde_minimo_pct | 42.37 |
@@ -238,7 +222,7 @@ ultimos_10_cierres_anuales: 2016-12-31 = 968.97, 2017-12-31 = 13921.48, 2018-12-
 | ultimo_cierre_anual_fecha | 2025-12-31 |
 | ultimo_cierre_anual_usd | 124.58 |
 | var_anual_pct | -34.21 |
-| precio_kraken_contraste_usd | 94.06 |
+| precio_kraken_contraste_usd | 94.05 |
 
 ultimos_30_cierres_semanales: 2026-04-12 = 81.5, 2026-04-19 = 83.57, 2026-04-26 = 86.9, 2026-05-03 = 84.04, 2026-05-10 = 96.45, 2026-05-17 = 85.26, 2026-05-24 = 85.19, 2026-05-31 = 82.21, 2026-06-07 = 66.2, 2026-06-14 = 70.85, 2026-06-21 = 72.54, 2026-06-28 = 71.19, 2026-07-05 = 81.56, 2026-07-12 = 76.76, 2026-07-19 = 76.29, 2026-07-26 = 76.63, 2026-08-02 = 73.48, 2026-08-09 = 76.34, 2026-08-16 = 74.5, 2026-08-23 = 95.37, 2026-08-30 = 101.89, 2026-09-06 = 106.49, 2026-09-13 = 99.48, 2026-09-20 = 111.0, 2026-09-27 = 121.91, 2026-10-04 = 121.63, 2026-10-11 = 111.15, 2026-10-18 = 103.94, 2026-10-25 = 101.14, 2026-11-01 = 94.26
 
@@ -262,11 +246,11 @@ ultimos_10_cierres_anuales: 2020-12-31 = 1.51, 2021-12-31 = 170.53, 2022-12-31 =
 
 | Dato | Valor |
 |---|---|
-| funding_medio_7d_pct_hora | 0.00107340149 |
+| funding_medio_7d_pct_hora | 0.001074 |
 | funding_medio_7d_anualizado_pct | 9.4 |
-| funding_medio_14d_pct_hora | 0.00100865253 |
+| funding_medio_14d_pct_hora | 0.001011 |
 | horas_funding_negativo_7d | 9 |
-| open_interest_usd | 529590080.0 |
+| open_interest_usd | 529633429.0 |
 | oi_var_7d_pct | SIN DATO |
 | oi_var_30d_pct | SIN DATO |
 | fuente | Hyperliquid (un solo mercado, no agregado) |
@@ -288,9 +272,9 @@ ultimos_10_cierres_anuales: 2020-12-31 = 1.51, 2021-12-31 = 170.53, 2022-12-31 =
 | tvl_fecha | 2026-11-01 |
 | tvl_usd_var_90d_pct | 14.68 |
 | tvl_en_sol_var_90d_pct | -10.66 |
-| fees_media_7d_usd | 10535326.0 |
+| fees_media_7d_usd | 10535255.0 |
 | fees_var_vs_30d_previos_pct | -28.4 |
-| ingresos_red_media_7d_usd | 3743178.0 |
+| ingresos_red_media_7d_usd | 3743113.0 |
 | ingresos_red_var_vs_30d_previos_pct | -27.52 |
 | stablecoins_solana_usd | 15359058993.0 |
 | stablecoins_solana_var_30d_pct | -8.08 |
@@ -355,6 +339,15 @@ ultimos_10_cierres_anuales: 2020-12-31 = 1.51, 2021-12-31 = 170.53, 2022-12-31 =
 | 2026-10-18 | 103.94 | pendiente | pendiente |
 | 2026-10-25 | 101.14 | pendiente | pendiente |
 | 2026-11-01 | 94.26 | pendiente | pendiente |
+
+### Pausa del sistema (calculada sobre BTC, aplica a BTC y SOL)
+
+| Dato | Valor |
+|---|---|
+| activa | False |
+| desde | SIN DATO |
+| cierres_seguidos_sobre_realized | SIN DATO |
+| ultimo_cierre_bajo_realized | False |
 
 ## Otras monedas
 
@@ -422,11 +415,11 @@ ultimos_10_cierres_anuales: 2023-12-31 = 0.77657, 2024-12-31 = 4.12, 2025-12-31 
 
 | Dato | Valor |
 |---|---|
-| funding_medio_7d_pct_hora | 0.00102133405 |
-| funding_medio_7d_anualizado_pct | 8.9 |
-| funding_medio_14d_pct_hora | 0.000834429286 |
+| funding_medio_7d_pct_hora | 0.001023 |
+| funding_medio_7d_anualizado_pct | 9.0 |
+| funding_medio_14d_pct_hora | 0.000834 |
 | horas_funding_negativo_7d | 13 |
-| open_interest_usd | 29915729.0 |
+| open_interest_usd | 29902287.0 |
 | oi_var_7d_pct | SIN DATO |
 | oi_var_30d_pct | SIN DATO |
 | fuente | Hyperliquid (un solo mercado, no agregado) |
@@ -493,11 +486,11 @@ ultimos_10_cierres_anuales: 2024-12-31 = 24.06, 2025-12-31 = 25.45
 
 | Dato | Valor |
 |---|---|
-| funding_medio_7d_pct_hora | 0.00267284607 |
-| funding_medio_7d_anualizado_pct | 23.4 |
-| funding_medio_14d_pct_hora | 0.00174744378 |
+| funding_medio_7d_pct_hora | 0.002664 |
+| funding_medio_7d_anualizado_pct | 23.3 |
+| funding_medio_14d_pct_hora | 0.001747 |
 | horas_funding_negativo_7d | 5 |
-| open_interest_usd | 1924200780.0 |
+| open_interest_usd | 1924966443.0 |
 | oi_var_7d_pct | SIN DATO |
 | oi_var_30d_pct | SIN DATO |
 | fuente | Hyperliquid (un solo mercado, no agregado) |
@@ -514,8 +507,8 @@ Fuente de precio: Hyperliquid, perpetuo (no es precio spot). Datos desde 2025-07
 | fecha_ultimo_cierre_semanal | 2026-11-01 |
 | precio_referencia_usd | 0.004193 |
 | cierre_semanal_usd | 0.004193 |
-| var_semanal_pct | -0.89813 |
-| var_7d_pct | -0.89813 |
+| var_semanal_pct | -0.9 |
+| var_7d_pct | -0.9 |
 | var_30d_pct | -22.12 |
 | sma50d | 0.0047472 |
 | sma200d | 0.0028676 |
@@ -564,11 +557,11 @@ ultimos_10_cierres_anuales: 2025-12-31 = 0.001914
 
 | Dato | Valor |
 |---|---|
-| funding_medio_7d_pct_hora | 0.00112542274 |
+| funding_medio_7d_pct_hora | 0.001126 |
 | funding_medio_7d_anualizado_pct | 9.9 |
-| funding_medio_14d_pct_hora | 0.000822584167 |
+| funding_medio_14d_pct_hora | 0.000828 |
 | horas_funding_negativo_7d | 9 |
-| open_interest_usd | 95634362.0 |
+| open_interest_usd | 95485176.0 |
 | oi_var_7d_pct | SIN DATO |
 | oi_var_30d_pct | SIN DATO |
 | fuente | Hyperliquid (un solo mercado, no agregado) |

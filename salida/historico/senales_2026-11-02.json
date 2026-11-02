@@ -1,8 +1,8 @@
 {
-  "snapshot_id": "9ef4b8fbe1f9",
-  "version_script": "1.5",
-  "generado_utc": "2026-11-02T10:53:49Z",
-  "valido_hasta_utc": "2026-11-03T22:53:49Z",
+  "snapshot_id": "dde3bdbcf240",
+  "version_script": "1.6",
+  "generado_utc": "2026-11-02T11:03:16Z",
+  "valido_hasta_utc": "2026-11-03T23:03:16Z",
   "estado": "PARCIAL",
   "fallos_criticos": [],
   "fallos": [
@@ -29,46 +29,11 @@
   "aviso": "Solo datos y condiciones objetivas. Lo que no aparece es SIN DATO.",
   "ultimo_domingo_cerrado": "2026-11-01",
   "cambios_desde_archivo_anterior": {
-    "archivo_anterior_snapshot": "721d38fd4f18",
-    "archivo_anterior_generado": "2026-11-02T10:13:59Z",
+    "archivo_anterior_snapshot": "9ef4b8fbe1f9",
+    "archivo_anterior_generado": "2026-11-02T10:53:49Z",
     "condiciones_cambiadas": [
       {
-        "clave": "btc.valoracion.MVRV Z < 0",
-        "antes": null,
-        "ahora": false
-      },
-      {
-        "clave": "btc.valoracion.precio bajo realized price",
-        "antes": null,
-        "ahora": false
-      },
-      {
-        "clave": "btc.capitulacion.NUPL < 0",
-        "antes": null,
-        "ahora": false
-      },
-      {
-        "clave": "btc.capitulacion.LTH-SOPR < 1",
-        "antes": null,
-        "ahora": false
-      },
-      {
-        "clave": "btc.capitulacion.Puell < 0,5",
-        "antes": null,
-        "ahora": false
-      },
-      {
-        "clave": "btc.capitulacion.hash ribbons en capitulación",
-        "antes": null,
-        "ahora": false
-      },
-      {
-        "clave": "btc.confirmacion.hash ribbons recuperadas en los últimos 30 días",
-        "antes": null,
-        "ahora": false
-      },
-      {
-        "clave": "btc.pausa_activa",
+        "clave": "pausa_sistema_activa",
         "antes": null,
         "ahora": false
       }
@@ -114,12 +79,6 @@
   },
   "atribucion": "Datos de red y precio: Coin Metrics Community (CC BY-NC 4.0). También DefiLlama, FRED, alternative.me, Hyperliquid, Kraken y BGeometrics.",
   "btc": {
-    "pausa": {
-      "activa": false,
-      "desde": null,
-      "cierres_seguidos_sobre_realized": null,
-      "ultimo_cierre_bajo_realized": false
-    },
     "resumen": {
       "precio_referencia_usd": 78135.08,
       "precio_referencia_fecha": "2026-11-01",
@@ -134,7 +93,7 @@
         "sentimiento": "0/1",
         "confirmacion": "1/3"
       },
-      "pausa_activa": false,
+      "pausa_sistema_activa": false,
       "semanas_desde_maximo": 56,
       "caida_desde_maximo_pct": -36.74,
       "rebote_desde_minimo_pct": 31.28
@@ -234,7 +193,7 @@
         "2024-12-31": 93389.73,
         "2025-12-31": 87516.98
       },
-      "precio_kraken_contraste_usd": 77881.7
+      "precio_kraken_contraste_usd": 77860.3
     },
     "ciclo": {
       "maximo_cierre_semanal_usd": 123523.77,
@@ -260,11 +219,11 @@
       "realized_fuente": "Coin Metrics CapMVRVCur"
     },
     "derivados": {
-      "funding_medio_7d_pct_hora": 0.00121791845,
+      "funding_medio_7d_pct_hora": 0.001218,
       "funding_medio_7d_anualizado_pct": 10.7,
-      "funding_medio_14d_pct_hora": 0.0011665272,
+      "funding_medio_14d_pct_hora": 0.001167,
       "horas_funding_negativo_7d": 2,
-      "open_interest_usd": 3146488511.0,
+      "open_interest_usd": 3144956268.0,
       "oi_var_7d_pct": null,
       "oi_var_30d_pct": null,
       "fuente": "Hyperliquid (un solo mercado, no agregado)"
@@ -680,7 +639,7 @@
         "sentimiento": "0/1",
         "confirmacion": "2/2"
       },
-      "pausa_activa": null,
+      "pausa_sistema_activa": false,
       "semanas_desde_maximo": 101,
       "caida_desde_maximo_pct": -62.82,
       "rebote_desde_minimo_pct": 42.37
@@ -776,7 +735,7 @@
         "2024-12-31": 189.36,
         "2025-12-31": 124.58
       },
-      "precio_kraken_contraste_usd": 94.06
+      "precio_kraken_contraste_usd": 94.05
     },
     "ciclo": {
       "maximo_cierre_semanal_usd": 253.53,
@@ -794,11 +753,11 @@
       "maximo_52s": 0.00159251245
     },
     "derivados": {
-      "funding_medio_7d_pct_hora": 0.00107340149,
+      "funding_medio_7d_pct_hora": 0.001074,
       "funding_medio_7d_anualizado_pct": 9.4,
-      "funding_medio_14d_pct_hora": 0.00100865253,
+      "funding_medio_14d_pct_hora": 0.001011,
       "horas_funding_negativo_7d": 9,
-      "open_interest_usd": 529590080.0,
+      "open_interest_usd": 529633429.0,
       "oi_var_7d_pct": null,
       "oi_var_30d_pct": null,
       "fuente": "Hyperliquid (un solo mercado, no agregado)"
@@ -808,9 +767,9 @@
       "tvl_fecha": "2026-11-01",
       "tvl_usd_var_90d_pct": 14.68,
       "tvl_en_sol_var_90d_pct": -10.66,
-      "fees_media_7d_usd": 10535326.0,
+      "fees_media_7d_usd": 10535255.0,
       "fees_var_vs_30d_previos_pct": -28.4,
-      "ingresos_red_media_7d_usd": 3743178.0,
+      "ingresos_red_media_7d_usd": 3743113.0,
       "ingresos_red_var_vs_30d_previos_pct": -27.52,
       "stablecoins_solana_usd": 15359058993.0,
       "stablecoins_solana_var_30d_pct": -8.08
@@ -1204,7 +1163,7 @@
       "valor": 297744901052.0,
       "fecha": "2026-11-02",
       "var_30d_pct": -3.01,
-      "var_90d_pct": -0.29433,
+      "var_90d_pct": -0.29,
       "fuente": "DefiLlama"
     }
   },
@@ -1213,6 +1172,12 @@
     "fecha": "2026-11-02",
     "dias_seguidos_miedo_extremo": 0,
     "fuente": "alternative.me"
+  },
+  "pausa_sistema": {
+    "activa": false,
+    "desde": null,
+    "cierres_seguidos_sobre_realized": null,
+    "ultimo_cierre_bajo_realized": false
   },
   "otras_monedas": {
     "nota": "Solo informativas: no forman parte de los tramos RT1-RT4.",
@@ -1322,11 +1287,11 @@
         "percentil_52s": 22.0
       },
       "derivados": {
-        "funding_medio_7d_pct_hora": 0.00102133405,
-        "funding_medio_7d_anualizado_pct": 8.9,
-        "funding_medio_14d_pct_hora": 0.000834429286,
+        "funding_medio_7d_pct_hora": 0.001023,
+        "funding_medio_7d_anualizado_pct": 9.0,
+        "funding_medio_14d_pct_hora": 0.000834,
         "horas_funding_negativo_7d": 13,
-        "open_interest_usd": 29915729.0,
+        "open_interest_usd": 29902287.0,
         "oi_var_7d_pct": null,
         "oi_var_30d_pct": null,
         "fuente": "Hyperliquid (un solo mercado, no agregado)"
@@ -1436,11 +1401,11 @@
         "percentil_52s": 97.5
       },
       "derivados": {
-        "funding_medio_7d_pct_hora": 0.00267284607,
-        "funding_medio_7d_anualizado_pct": 23.4,
-        "funding_medio_14d_pct_hora": 0.00174744378,
+        "funding_medio_7d_pct_hora": 0.002664,
+        "funding_medio_7d_anualizado_pct": 23.3,
+        "funding_medio_14d_pct_hora": 0.001747,
         "horas_funding_negativo_7d": 5,
-        "open_interest_usd": 1924200780.0,
+        "open_interest_usd": 1924966443.0,
         "oi_var_7d_pct": null,
         "oi_var_30d_pct": null,
         "fuente": "Hyperliquid (un solo mercado, no agregado)"
@@ -1454,8 +1419,8 @@
         "fecha_ultimo_cierre_semanal": "2026-11-01",
         "precio_referencia_usd": 0.004193,
         "cierre_semanal_usd": 0.004193,
-        "var_semanal_pct": -0.89813,
-        "var_7d_pct": -0.89813,
+        "var_semanal_pct": -0.9,
+        "var_7d_pct": -0.9,
         "var_30d_pct": -22.12,
         "sma50d": 0.0047472,
         "sma200d": 0.0028676,
@@ -1542,11 +1507,11 @@
         "percentil_52s": 88.7
       },
       "derivados": {
-        "funding_medio_7d_pct_hora": 0.00112542274,
+        "funding_medio_7d_pct_hora": 0.001126,
         "funding_medio_7d_anualizado_pct": 9.9,
-        "funding_medio_14d_pct_hora": 0.000822584167,
+        "funding_medio_14d_pct_hora": 0.000828,
         "horas_funding_negativo_7d": 9,
-        "open_interest_usd": 95634362.0,
+        "open_interest_usd": 95485176.0,
         "oi_var_7d_pct": null,
         "oi_var_30d_pct": null,
         "fuente": "Hyperliquid (un solo mercado, no agregado)"
