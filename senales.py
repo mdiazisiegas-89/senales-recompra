@@ -18,6 +18,9 @@ import argparse
 import hashlib
 import io
 import json
+import math
+import os
+import re
 import sys
 import time
 from datetime import datetime, timedelta, timezone
@@ -26,7 +29,7 @@ from pathlib import Path
 import pandas as pd
 import requests
 
-VERSION = "1.3"
+VERSION = "1.5"
 CM = "https://community-api.coinmetrics.io/v4/timeseries/asset-metrics"
 HYPERLIQUID = "https://api.hyperliquid.xyz/info"
 SIN_DATO = "SIN DATO"
@@ -67,7 +70,14 @@ EVENTOS = {
 }
 # Seguimiento aparte: informativas, fuera de los tramos RT1-RT4.
 OTRAS_MONEDAS = ["SUI", "HYPE", "PUMP"]
-CRITICOS = ["btc_precio", "btc_capreal", "btc_oferta", "sol_precio"]
+# Solo los precios son críticos. Si falta el precio realizado (o la oferta, que solo sirve
+# para calcularlo), el archivo sale PARCIAL y la pausa en SIN DATO.
+CRITICOS = ["btc_precio", "sol_precio"]
+
+
+def limpiar(texto) -> str:
+    """Borra claves de API de los mensajes: el archivo se publica en un repositorio público."""
+    return re.sub(r"(api_key=)[^&\s'\"]+", r"\1***", str(texto))
 
 
 class Fallos:
@@ -77,7 +87,7 @@ class Fallos:
         self.items: list[dict] = []
 
     def add(self, clave: str, motivo: object):
-        self.items.append({"clave": clave, "motivo": str(motivo)[:200]})
+        self.items.append({"clave": clave, "motivo": limpiar(motivo)[:400]})
 
     def contiene(self, clave: str) -> bool:
         return any(i["clave"] == clave for i in self.items)
@@ -105,8 +115,8 @@ def post_json(url, cuerpo):
     return r.json()
 
 
-def get_texto(url):
-    r = requests.get(url, timeout=45, headers={"User-Agent": "Mozilla/5.0"})
+def get_texto(url, timeout=20):
+    r = requests.get(url, timeout=timeout, headers={"User-Agent": "Mozilla/5.0"})
     r.raise_for_status()
     return r.text
 
@@ -161,12 +171,79 @@ def fear_greed() -> pd.Series:
 
 
 def fred(serie: str) -> pd.Series:
-    texto = get_texto(f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={serie}")
+    """Con FRED_API_KEY usa la API oficial (más fiable); sin ella, el CSV público."""
+    clave = os.environ.get("FRED_API_KEY", "").strip()
+    if clave:
+        d = get_json("https://api.stlouisfed.org/fred/series/observations", {
+            "series_id": serie, "api_key": clave, "file_type": "json",
+            "observation_start": "2024-01-01"}, reintentos=1)
+        s = pd.Series({pd.Timestamp(o["date"]): float(o["value"])
+                       for o in d["observations"] if o["value"] not in (".", "")}, dtype=float)
+        if s.empty:
+            raise ValueError("sin observaciones")
+        return s.sort_index()
+    for intento in range(2):
+        try:
+            texto = get_texto(f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={serie}")
+            break
+        except requests.RequestException:
+            if intento == 1:
+                raise
+            time.sleep(3)
     df = pd.read_csv(io.StringIO(texto))
     df.columns = ["fecha", "valor"]
     df["valor"] = pd.to_numeric(df["valor"], errors="coerce")
     df["fecha"] = pd.to_datetime(df["fecha"])
     return df.dropna().set_index("fecha")["valor"].sort_index()
+
+
+_FECHAS_BG = {"d", "date", "day", "theday", "unixts", "t", "time", "timestamp"}
+
+
+def _bg_filas(d):
+    if isinstance(d, dict):
+        for k in ("data", "result", "values"):
+            if isinstance(d.get(k), list):
+                return d[k]
+        return [d]
+    return d if isinstance(d, list) else []
+
+
+def _bg_fecha(fila: dict) -> pd.Timestamp:
+    for k, v in fila.items():
+        if str(k).lower() in ("d", "date", "day", "theday"):
+            return pd.Timestamp(v).tz_localize(None).normalize()
+    for k, v in fila.items():
+        if str(k).lower() in ("unixts", "t", "time", "timestamp"):
+            try:
+                x = float(v)
+                return pd.Timestamp(int(x / 1000 if x > 1e11 else x), unit="s").normalize()
+            except (TypeError, ValueError):
+                return pd.Timestamp(v).tz_localize(None).normalize()
+    raise ValueError("sin fecha")
+
+
+def _bg_valor(fila: dict, endpoint: str) -> float:
+    clave = endpoint.replace("-", "").lower()
+    cand = {k: v for k, v in fila.items() if str(k).lower() not in _FECHAS_BG}
+    for k, v in cand.items():
+        if str(k).lower().replace("_", "") == clave:
+            return float(v)
+    if len(cand) == 1:
+        return float(next(iter(cand.values())))
+    raise ValueError(f"valor no identificado entre {list(fila)[:6]}")
+
+
+def bgeometrics(endpoint: str, ultimo: bool = False) -> pd.Series:
+    """Plan gratuito: 10 peticiones/hora y 15/día, sin reintentos para no gastarlas."""
+    d = get_json(f"https://bitcoin-data.com/v1/{endpoint}" + ("/last" if ultimo else ""), reintentos=1)
+    try:
+        s = pd.Series({_bg_fecha(f): _bg_valor(f, endpoint) for f in _bg_filas(d)}, dtype=float).sort_index()
+        if s.empty:
+            raise ValueError("vacía")
+    except Exception as e:
+        raise ValueError(f"respuesta no reconocida ({e}): {json.dumps(d)[:150]}") from None
+    return s
 
 
 def hyperliquid(moneda: str, ahora: datetime) -> dict:
@@ -241,10 +318,15 @@ def macd(s: pd.Series):
 
 
 def n(x, dec=2):
-    """Redondea y convierte NaN en None."""
+    """Redondea y convierte NaN en None. Los valores menores de 1 conservan cifras significativas."""
     if x is None or pd.isna(x):
         return None
-    return round(float(x), dec)
+    x = float(x)
+    if not math.isfinite(x):
+        return None
+    if x != 0 and abs(x) < 1:
+        dec += math.ceil(-math.log10(abs(x))) + 2
+    return round(x, dec)
 
 
 def ultimo(s, i=-1):
@@ -400,16 +482,33 @@ def cambios(doc: dict, anterior: dict | None) -> dict:
     }
 
 
-def onchain_btc(p, mcap, rcap, oferta, hash_rate, emision) -> dict:
+def archivo_hace_7_dias(dir_salida: Path, ahora: datetime, fallos: Fallos) -> dict | None:
+    """El archivo histórico más reciente con al menos 7 días de antigüedad."""
+    limite = (pd.Timestamp(ahora).tz_localize(None).normalize() - pd.Timedelta(days=7)).strftime("%Y-%m-%d")
+    candidatos = sorted(f for f in (dir_salida / "historico").glob("senales_*.json")
+                        if f.stem.removeprefix("senales_") <= limite)
+    if not candidatos:
+        return None
+    try:
+        return json.loads(candidatos[-1].read_text(encoding="utf-8"))
+    except (OSError, ValueError) as e:
+        fallos.add("archivo_7_dias", f"no se pudo leer {candidatos[-1].name}: {e}")
+        return None
+
+
+def onchain_btc(p, mcap, rcap, rp, hash_rate, emision, lth_sopr=None) -> dict:
+    """Cada bloque es independiente: si falta el precio realizado, Puell y hash ribbons siguen."""
     out: dict = {}
-    rp = rcap / oferta
-    mvrv = (mcap / rcap).dropna()
-    z = ((mcap - rcap) / mcap.expanding(365).std()).dropna()
-    out["realized_price_usd"] = n(rp.dropna().iloc[-1])
-    out["precio_bajo_realized"] = bool(p.iloc[-1] < rp.dropna().iloc[-1])
-    out["mvrv"] = n(mvrv.iloc[-1], 3)
-    out["mvrv_z"] = n(z.iloc[-1], 3)
-    out["nupl"] = n((1 - rcap / mcap).dropna().iloc[-1], 3)
+    if mcap is not None and rcap is not None and rp is not None:
+        rp_al = rp[rp.index <= p.index[-1]].dropna()
+        mvrv = (mcap / rcap).dropna()
+        z = ((mcap - rcap) / mcap.expanding(365).std()).dropna()
+        out["realized_price_usd"] = n(rp_al.iloc[-1])
+        out["realized_price_fecha"] = rp_al.index[-1].strftime("%Y-%m-%d")
+        out["precio_bajo_realized"] = bool(p.iloc[-1] < rp_al.iloc[-1])
+        out["mvrv"] = n(mvrv.iloc[-1], 3)
+        out["mvrv_z"] = n(z.iloc[-1], 3)
+        out["nupl"] = n((1 - rcap / mcap).dropna().iloc[-1], 3)
     if emision is not None:
         out["puell"] = n((emision / emision.rolling(365).mean()).dropna().iloc[-1], 3)
     if hash_rate is not None:
@@ -418,7 +517,51 @@ def onchain_btc(p, mcap, rcap, oferta, hash_rate, emision) -> dict:
         cruces = bajo[bajo != bajo.shift()].index
         out["hash_ribbons_30_bajo_60"] = bool(bajo.iloc[-1])
         out["hash_ribbons_dias_en_estado"] = int((bajo.index[-1] - cruces[-1]).days)
+    if lth_sopr is not None and len(lth_sopr):
+        out["lth_sopr"] = n(lth_sopr.iloc[-1], 3)
+        out["lth_sopr_fecha"] = lth_sopr.index[-1].strftime("%Y-%m-%d")
     return out
+
+
+def _rc_cm(mcap, oferta):
+    c = coinmetrics("btc", "CapRealUSD")
+    return c, c / oferta
+
+
+def _rc_mvrv(mcap, oferta):
+    c = mcap / coinmetrics("btc", "CapMVRVCur")
+    return c, c / oferta
+
+
+def _rc_bg(mcap, oferta):
+    rp = bgeometrics("realized-price")
+    return rp * oferta, rp
+
+
+FUENTES_REALIZADO = [("Coin Metrics CapRealUSD", _rc_cm), ("Coin Metrics CapMVRVCur", _rc_mvrv),
+                     ("BGeometrics realized-price", _rc_bg)]
+
+
+def realizado_btc(p, mcap, oferta, fallos: Fallos, avisos: list):
+    """Capitalización y precio realizados, con tres fuentes por orden. Devuelve (rcap, rp, fuente)."""
+    if mcap is None or oferta is None:
+        fallos.add("btc_realized", "faltan la capitalización o la oferta de Coin Metrics")
+        return None, None, None
+    motivos = []
+    for nombre, f in FUENTES_REALIZADO:
+        try:
+            rcap, rp = f(mcap, oferta)
+            ultimo = rp.dropna().iloc[-1]
+            # Rango histórico de BTC: MVRV entre ~0,6 y ~7, es decir, realizado/precio entre 0,14 y 1,7.
+            if not 0.1 < ultimo / p.iloc[-1] < 3:
+                raise ValueError(f"valor implausible: {ultimo:.4g} frente a precio {p.iloc[-1]:.4g}")
+            if motivos:
+                avisos.append(limpiar(f"Precio realizado tomado de {nombre}. Antes fallaron: " + " | ".join(motivos)))
+            return rcap, rp, nombre
+        except Exception as e:
+            motivos.append(f"{nombre}: {type(e).__name__}: {str(e)[:90]}")
+    fallos.add("btc_realized", " | ".join(motivos))
+    return None, None, None
 
 
 def cond(nombre: str, resultado) -> dict:
@@ -456,7 +599,7 @@ def familias_btc(t, oc, der, sent, hash_rate, p) -> dict:
         ]),
         "capitulacion": familia([
             cond("NUPL < 0", si(oc.get("nupl"), lambda v: v < u["nupl_max"])),
-            cond("LTH-SOPR < 1", None),
+            cond("LTH-SOPR < 1", si(oc.get("lth_sopr"), lambda v: v < 1)),
             cond("Puell < 0,5", si(oc.get("puell"), lambda v: v < u["puell_max"])),
             cond("hash ribbons en capitulación", oc.get("hash_ribbons_30_bajo_60")),
         ]),
@@ -562,8 +705,13 @@ def macro_datos(fallos) -> dict:
     out: dict = {}
     series = {"tipo_real_10a_pct": "DFII10", "bono_10a_pct": "DGS10",
               "dolar_amplio_fed_no_es_dxy": "DTWEXBGS", "m2_eeuu_no_es_global_mm_usd": "WM2NS"}
+    fred_caido = False
     for nombre, codigo in series.items():
+        if fred_caido:  # no esperar el tiempo límite cuatro veces seguidas
+            fallos.add(f"fred_{codigo}", "omitido: FRED no respondió en la serie anterior")
+            continue
         s = intenta(fallos, f"fred_{codigo}", fred, codigo)
+        fred_caido = s is None
         if s is not None and len(s):
             out[nombre] = {"valor": n(s.iloc[-1]), "fecha": s.index[-1].strftime("%Y-%m-%d"),
                            "var_30d_pct": var_pct(s, 30), "fuente": f"FRED {codigo}"}
@@ -588,6 +736,8 @@ def derivados(moneda, ahora, ruta_oi, fecha, fallos) -> dict:
 def solana_datos(sol_precio, fallos) -> dict:
     out: dict = {}
     tvl = intenta(fallos, "tvl_solana", defillama_tvl_solana)
+    if tvl is not None:
+        tvl = tvl[tvl.index <= sol_precio.index[-1]]  # misma fecha que el precio de SOL
     if tvl is not None and len(tvl):
         out["tvl_usd"], out["tvl_fecha"] = n(tvl.iloc[-1], 0), tvl.index[-1].strftime("%Y-%m-%d")
         out["tvl_usd_var_90d_pct"] = var_pct(tvl, 90)
@@ -623,7 +773,7 @@ def otra_moneda(moneda, p_btc, ahora, ruta_oi, fecha, fallos) -> dict | None:
 
 
 NO_DISPONIBLES = {
-    "LTH-SOPR": "métrica de pago",
+    "LTH-SOPR": "BGeometrics no respondió en esta ejecución",
     "liquidaciones agregadas": "sin fuente gratuita fiable",
     "skew de opciones y mapas de liquidaciones": "no incluidos",
     "reservas y netflows de exchanges": "métrica de pago",
@@ -637,6 +787,7 @@ NO_DISPONIBLES = {
 
 def construir(ahora: datetime, dir_salida: Path) -> dict:
     fallos = Fallos()
+    avisos: list[str] = []
     fecha = ahora.strftime("%Y-%m-%d")
     ruta_oi = dir_salida / "historial_oi.csv"
     domingo = ultimo_domingo_cerrado(ahora)
@@ -647,6 +798,7 @@ def construir(ahora: datetime, dir_salida: Path) -> dict:
             anterior = json.loads(ruta_anterior.read_text(encoding="utf-8"))
         except (OSError, ValueError) as e:
             fallos.add("archivo_anterior", f"no se pudo leer: {e}")
+    semana = archivo_hace_7_dias(dir_salida, ahora, fallos)
 
     def al_dia(t: dict, nombre: str) -> bool:
         ok = t["fecha_ultimo_cierre_semanal"] == domingo.strftime("%Y-%m-%d")
@@ -660,7 +812,6 @@ def construir(ahora: datetime, dir_salida: Path) -> dict:
 
     p_btc = cm("btc_precio", "btc", "PriceUSD")
     mcap = cm("btc_capmercado", "btc", "CapMrktCurUSD")
-    rcap = cm("btc_capreal", "btc", "CapRealUSD")
     oferta = cm("btc_oferta", "btc", "SplyCur")
     hash_rate = cm("btc_hashrate", "btc", "HashRate")
     emision = cm("btc_emision", "btc", "IssTotUSD")
@@ -681,10 +832,13 @@ def construir(ahora: datetime, dir_salida: Path) -> dict:
         t = tendencia_precio(p_btc)
         t["precio_kraken_contraste_usd"] = spot
         der = derivados("BTC", ahora, ruta_oi, fecha, fallos)
-        oc: dict = {}
-        if all(x is not None for x in (mcap, rcap, oferta)):
-            oc = intenta(fallos, "btc_onchain", onchain_btc, p_btc, mcap, rcap, oferta, hash_rate, emision) or {}
-            resultado["btc"]["pausa"] = intenta(fallos, "btc_pausa", pausa, p_btc, rcap / oferta)
+        rcap, rp, fuente_rp = realizado_btc(p_btc, mcap, oferta, fallos, avisos)
+        lth = intenta(fallos, "btc_lth_sopr", bgeometrics, "lth-sopr", True)
+        oc = intenta(fallos, "btc_onchain", onchain_btc, p_btc, mcap, rcap, rp, hash_rate, emision, lth) or {}
+        if fuente_rp:
+            oc["realized_fuente"] = fuente_rp
+        if rp is not None:
+            resultado["btc"]["pausa"] = intenta(fallos, "btc_pausa", pausa, p_btc, rp)
         fam = familias_btc(t, oc, der, sent, hash_rate, p_btc)
         confirmacion_btc = fam["confirmacion"]["cumplidas"] > 0 if fam["confirmacion"]["medibles"] else None
         c = ciclo(p_btc)
@@ -718,6 +872,10 @@ def construir(ahora: datetime, dir_salida: Path) -> dict:
         "nota": "Solo informativas: no forman parte de los tramos RT1-RT4.",
         **{m.lower(): otra_moneda(m, p_btc, ahora, ruta_oi, fecha, fallos) for m in OTRAS_MONEDAS}}
 
+    sin_dato = dict(NO_DISPONIBLES)
+    if (resultado["btc"].get("onchain") or {}).get("lth_sopr") is not None:
+        sin_dato.pop("LTH-SOPR", None)
+
     criticos = [c for c in CRITICOS if fallos.contiene(c)]
     estado = "FALLO" if criticos else ("PARCIAL" if fallos.items else "OK")
     doc = {
@@ -727,14 +885,16 @@ def construir(ahora: datetime, dir_salida: Path) -> dict:
         "estado": estado,
         "fallos_criticos": criticos,
         "fallos": fallos.items,
+        "avisos": avisos,
         "aviso": "Solo datos y condiciones objetivas. Lo que no aparece es SIN DATO.",
         "ultimo_domingo_cerrado": domingo.strftime("%Y-%m-%d"),
         "cambios_desde_archivo_anterior": cambios(resultado, anterior),
+        "cambios_desde_hace_7_dias": cambios(resultado, semana),
         "eventos_calibracion": EVENTOS,
-        "sin_dato": NO_DISPONIBLES,
+        "sin_dato": sin_dato,
         "umbrales": UMBRALES,
         "atribucion": "Datos de red y precio: Coin Metrics Community (CC BY-NC 4.0). "
-                      "También DefiLlama, FRED, alternative.me, Hyperliquid y Kraken.",
+                      "También DefiLlama, FRED, alternative.me, Hyperliquid, Kraken y BGeometrics.",
         **resultado,
     }
     doc = {"snapshot_id": hashlib.sha256(
@@ -759,15 +919,20 @@ def a_markdown(doc: dict) -> str:
          f"- Generado: {doc['generado_utc']}", f"- Válido hasta: {doc['valido_hasta_utc']}"]
     for f in doc["fallos"]:
         o.append(f"- Fallo `{f['clave']}`: {f['motivo']}")
-    cb = doc.get("cambios_desde_archivo_anterior") or {}
-    o.append("\n## Cambios desde el archivo anterior\n")
-    if not cb.get("archivo_anterior_snapshot"):
-        o.append("Sin archivo anterior.")
-    elif not cb["condiciones_cambiadas"]:
-        o.append(f"Ninguna condición ha cambiado desde el snapshot `{cb['archivo_anterior_snapshot']}`.")
-    for c in cb.get("condiciones_cambiadas", []):
-        f = lambda v: SIN_DATO if v is None else v
-        o.append(f"- {c['clave']}: {f(c['antes'])} → {f(c['ahora'])}")
+    for a in doc.get("avisos", []):
+        o.append(f"- Aviso: {a}")
+    for titulo, clave_doc in (("Cambios desde el archivo anterior", "cambios_desde_archivo_anterior"),
+                              ("Cambios en los últimos 7 días", "cambios_desde_hace_7_dias")):
+        cb = doc.get(clave_doc) or {}
+        o.append(f"\n## {titulo}\n")
+        if not cb.get("archivo_anterior_snapshot"):
+            o.append("Sin archivo de referencia.")
+        elif not cb["condiciones_cambiadas"]:
+            o.append(f"Ninguna condición ha cambiado desde el snapshot `{cb['archivo_anterior_snapshot']}` "
+                     f"({cb.get('archivo_anterior_generado')}).")
+        for c in cb.get("condiciones_cambiadas", []):
+            f = lambda v: SIN_DATO if v is None else v
+            o.append(f"- {c['clave']}: {f(c['antes'])} → {f(c['ahora'])}")
     for activo in ("btc", "sol"):
         a = doc.get(activo) or {}
         o.append(f"\n## {activo.upper()}")
