@@ -29,7 +29,7 @@ from pathlib import Path
 import pandas as pd
 import requests
 
-VERSION = "1.8.1"
+VERSION = "1.8.2"
 CM = "https://community-api.coinmetrics.io/v4/timeseries/asset-metrics"
 HYPERLIQUID = "https://api.hyperliquid.xyz/info"
 SIN_DATO = "SIN DATO"
@@ -296,28 +296,40 @@ def hyperliquid_velas(moneda: str, ahora: datetime) -> pd.Series:
     return s
 
 
-def hyperliquid_spot(token: str) -> float:
-    """Precio spot en Hyperliquid del par token/USDC."""
+def hyperliquid_spot(token: str, referencia: float | None = None) -> float:
+    """Precio spot en Hyperliquid del par token/stable.
+
+    Puede haber varios tokens con el mismo nombre (réplicas que cotizan a céntimos). Se reúnen todos
+    los pares con USDC/USDH/USDT0. Con `referencia` (el precio del perpetuo) gana el par cuyo precio
+    más se acerca; si ninguno está a menos de un 50 %, no se inventa nada: se lanza un error que
+    lista los candidatos para poder diagnosticarlo. Sin referencia, canónicos primero y mayor volumen.
+    """
     meta, ctxs = post_json(HYPERLIQUID, {"type": "spotMetaAndAssetCtxs"})
-    # Puede haber varios tokens con el mismo nombre (réplicas no canónicas): se prueban todos,
-    # los canónicos primero, y entre los pares USDC encontrados gana el de mayor volumen.
     candidatos = [t for t in meta["tokens"] if t["name"] == token]
-    usdc = [t["index"] for t in meta["tokens"] if t["name"] == "USDC"]
-    if not candidatos or not usdc:
+    quotes = {t["index"] for t in meta["tokens"] if t["name"] in ("USDC", "USDH", "USDT0")}
+    if not candidatos or not quotes:
         raise ValueError(f"sin par spot para {token}")
-    canonicos = [t["index"] for t in candidatos if t.get("isCanonical")]
-    indices = set(canonicos or [t["index"] for t in candidatos])
-    pares = []
+    canonicos = {t["index"] for t in candidatos if t.get("isCanonical")}
+    todos = {t["index"] for t in candidatos}
+    pares = []  # (volumen, precio, nombre_par, canonico)
     for i, u in enumerate(meta["universe"]):
         a, b = u["tokens"]
-        if (a in indices and b in usdc) or (b in indices and a in usdc):
+        if (a in todos and b in quotes) or (b in todos and a in quotes):
             try:
-                pares.append((float(ctxs[i].get("dayNtlVlm") or 0), float(ctxs[i]["markPx"])))
+                px = float(ctxs[i]["markPx"])
+                pares.append((float(ctxs[i].get("dayNtlVlm") or 0), px, u.get("name", str(i)),
+                              bool({a, b} & canonicos)))
             except (KeyError, ValueError, TypeError):
                 continue
     if not pares:
         raise ValueError(f"sin par spot para {token}")
-    return max(pares)[1]
+    if referencia:
+        mejor = min(pares, key=lambda x: abs(x[1] / referencia - 1))
+        if abs(mejor[1] / referencia - 1) > 0.5:
+            lista = ", ".join(f"{x[2]}={x[1]:g} (vol {x[0]:.0f}, canónico={x[3]})" for x in pares[:6])
+            raise ValueError(f"ningún par {token} cercano al perpetuo ({referencia:g}); candidatos: {lista}")
+        return mejor[1]
+    return max(pares, key=lambda x: (x[3], x[0]))[1]
 
 
 def defillama_chain_tvl(cadena: str) -> pd.Series:
@@ -937,9 +949,14 @@ def otra_moneda(moneda, p_btc, ahora, ruta_oi, fecha, fallos, mercado=None, dir_
     k, cfg = moneda.lower(), CESTA[moneda]
     tipo_spot, par = cfg["spot"]
     try:  # contraste orientativo: que no exista par spot no es un fallo del archivo
-        spot = (hyperliquid_spot if tipo_spot == "hyperliquid_spot" else kraken_precio)(par)
-    except Exception:
+        if tipo_spot == "hyperliquid_spot":
+            spot = hyperliquid_spot(par, float(p.iloc[-1]))
+        else:
+            spot = kraken_precio(par)
+    except Exception as e:
         spot = None
+        if str(e).startswith("ningún par"):  # hay pares pero ninguno encaja: se anota para diagnosticar
+            fallos.add(f"{k}_contraste_par", limpiar(str(e))[:400])
     spot = validar_precio(p, k, ahora, fallos, spot)
     rel: dict = {}
     if p_btc is not None:
