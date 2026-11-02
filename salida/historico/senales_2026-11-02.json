@@ -1,14 +1,14 @@
 {
-  "snapshot_id": "1fce1bad0fd3",
-  "version_script": "1.8.1",
-  "generado_utc": "2026-11-02T15:34:22Z",
-  "valido_hasta_utc": "2026-11-04T03:34:22Z",
+  "snapshot_id": "8e563b36d3f8",
+  "version_script": "1.8.2",
+  "generado_utc": "2026-11-02T15:39:30Z",
+  "valido_hasta_utc": "2026-11-04T03:39:30Z",
   "estado": "PARCIAL",
   "fallos_criticos": [],
   "fallos": [
     {
-      "clave": "hype_contraste",
-      "motivo": "el precio spot de contraste difiere 100% del último cierre"
+      "clave": "hype_contraste_par",
+      "motivo": "ningún par HYPE cercano al perpetuo (87.841); candidatos: @107=0.081414 (vol 0, canónico=False), @207=1 (vol 0, canónico=False), @232=2.95 (vol 0, canónico=False)"
     }
   ],
   "avisos": [
@@ -17,8 +17,8 @@
   "aviso": "Solo datos y condiciones objetivas. Lo que no aparece es SIN DATO.",
   "ultimo_domingo_cerrado": "2026-11-01",
   "cambios_desde_archivo_anterior": {
-    "archivo_anterior_snapshot": "774e7b88139b",
-    "archivo_anterior_generado": "2026-11-02T15:15:38Z",
+    "archivo_anterior_snapshot": "1fce1bad0fd3",
+    "archivo_anterior_generado": "2026-11-02T15:34:22Z",
     "condiciones_cambiadas": []
   },
   "cambios_desde_hace_7_dias": {
@@ -184,7 +184,7 @@
         "2024-12-31": 93389.73,
         "2025-12-31": 87516.98
       },
-      "precio_kraken_contraste_usd": 77731.2
+      "precio_kraken_contraste_usd": 77700.1
     },
     "ciclo": {
       "maximo_cierre_semanal_usd": 123523.77,
@@ -214,8 +214,8 @@
       "funding_medio_7d_anualizado_pct": 10.7,
       "funding_medio_14d_pct_hora": 0.001167,
       "horas_funding_negativo_7d": 2,
-      "open_interest_usd": 3248478603.0,
-      "volumen_24h_usd": 1653501169.0,
+      "open_interest_usd": 3242687361.0,
+      "volumen_24h_usd": 1646024197.0,
       "oi_var_7d_pct": null,
       "oi_var_30d_pct": null,
       "fuente": "Hyperliquid (un solo mercado, no agregado)"
@@ -728,7 +728,7 @@
         "2024-12-31": 189.36,
         "2025-12-31": 124.58
       },
-      "precio_kraken_contraste_usd": 93.93
+      "precio_kraken_contraste_usd": 93.9
     },
     "ciclo": {
       "maximo_cierre_semanal_usd": 253.53,
@@ -750,8 +750,8 @@
       "funding_medio_7d_anualizado_pct": 9.4,
       "funding_medio_14d_pct_hora": 0.001018,
       "horas_funding_negativo_7d": 9,
-      "open_interest_usd": 533732597.0,
-      "volumen_24h_usd": 253718396.0,
+      "open_interest_usd": 533496162.0,
+      "volumen_24h_usd": 252635840.0,
       "oi_var_7d_pct": null,
       "oi_var_30d_pct": null,
       "fuente": "Hyperliquid (un solo mercado, no agregado)"
@@ -1310,7 +1310,7 @@
           "2024-12-31": 4.12,
           "2025-12-31": 1.4
         },
-        "precio_spot_contraste_usd": 0.8885
+        "precio_spot_contraste_usd": 0.8878
       },
       "ciclo": {
         "maximo_cierre_semanal_usd": 5.25,
@@ -1340,12 +1340,12 @@
         "ingresos_media_7d_usd": 23479.0,
         "ingresos_var_vs_30d_previos_pct": -39.13,
         "ingresos_fuente": "DefiLlama cadena sui",
-        "mcap_usd": 3679994237.0,
-        "fdv_usd": 8890929023.0,
+        "mcap_usd": 3681278665.0,
+        "fdv_usd": 8894032222.0,
         "oferta_circulante": 4139043544.0,
         "fdv_sobre_mcap": 2.42,
         "mcap_var_30d_pct": null,
-        "mcap_sobre_ingresos_anualizados": 429.4,
+        "mcap_sobre_ingresos_anualizados": 429.6,
         "mercado_fuente": "CoinGecko"
       },
       "familias": {
@@ -1404,8 +1404,8 @@
         "funding_medio_7d_anualizado_pct": 8.9,
         "funding_medio_14d_pct_hora": 0.000834,
         "horas_funding_negativo_7d": 13,
-        "open_interest_usd": 30551161.0,
-        "volumen_24h_usd": 8978077.0,
+        "open_interest_usd": 30527742.0,
+        "volumen_24h_usd": 8980254.0,
         "oi_var_7d_pct": null,
         "oi_var_30d_pct": null,
         "fuente": "Hyperliquid (un solo mercado, no agregado)"
@@ -1520,7 +1520,7 @@
           "2024-12-31": 24.06,
           "2025-12-31": 25.45
         },
-        "precio_spot_contraste_usd": 0.081414
+        "precio_spot_contraste_usd": null
       },
       "ciclo": {
         "maximo_cierre_semanal_usd": 93.75,
@@ -1550,8 +1550,8 @@
         "ingresos_media_7d_usd": 2362031.0,
         "ingresos_var_vs_30d_previos_pct": 13.02,
         "ingresos_fuente": "DefiLlama protocolo hyperliquid-perps",
-        "mcap_usd": 20645777365.0,
-        "fdv_usd": 82058012377.0,
+        "mcap_usd": 20643578523.0,
+        "fdv_usd": 82049272932.0,
         "oferta_circulante": 239406814.0,
         "fdv_sobre_mcap": 3.97,
         "mcap_var_30d_pct": null,
@@ -1614,8 +1614,8 @@
         "funding_medio_7d_anualizado_pct": 23.5,
         "funding_medio_14d_pct_hora": 0.001748,
         "horas_funding_negativo_7d": 4,
-        "open_interest_usd": 1955637316.0,
-        "volumen_24h_usd": 488706519.0,
+        "open_interest_usd": 1954273578.0,
+        "volumen_24h_usd": 487067300.0,
         "oi_var_7d_pct": null,
         "oi_var_30d_pct": null,
         "fuente": "Hyperliquid (un solo mercado, no agregado)"
@@ -1722,7 +1722,7 @@
         "ultimos_10_cierres_anuales": {
           "2025-12-31": 0.001914
         },
-        "precio_spot_contraste_usd": 0.004162
+        "precio_spot_contraste_usd": 0.004167
       },
       "ciclo": {
         "maximo_cierre_semanal_usd": 0.008024,
@@ -1747,8 +1747,8 @@
         "ingresos_media_7d_usd": 1174516.0,
         "ingresos_var_vs_30d_previos_pct": -24.33,
         "ingresos_fuente": "DefiLlama protocolo pump.fun",
-        "mcap_usd": 1919557078.0,
-        "fdv_usd": 3442780623.0,
+        "mcap_usd": 1916031904.0,
+        "fdv_usd": 3436458122.0,
         "oferta_circulante": 459828161839.0,
         "fdv_sobre_mcap": 1.79,
         "mcap_var_30d_pct": null,
@@ -1811,8 +1811,8 @@
         "funding_medio_7d_anualizado_pct": 9.9,
         "funding_medio_14d_pct_hora": 0.000828,
         "horas_funding_negativo_7d": 9,
-        "open_interest_usd": 99997923.0,
-        "volumen_24h_usd": 31000008.0,
+        "open_interest_usd": 99803808.0,
+        "volumen_24h_usd": 30806802.0,
         "oi_var_7d_pct": null,
         "oi_var_30d_pct": null,
         "fuente": "Hyperliquid (un solo mercado, no agregado)"
