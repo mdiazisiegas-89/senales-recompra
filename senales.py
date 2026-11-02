@@ -29,7 +29,7 @@ from pathlib import Path
 import pandas as pd
 import requests
 
-VERSION = "1.8.2"
+VERSION = "1.8.3"
 CM = "https://community-api.coinmetrics.io/v4/timeseries/asset-metrics"
 HYPERLIQUID = "https://api.hyperliquid.xyz/info"
 SIN_DATO = "SIN DATO"
@@ -311,15 +311,21 @@ def hyperliquid_spot(token: str, referencia: float | None = None) -> float:
         raise ValueError(f"sin par spot para {token}")
     canonicos = {t["index"] for t in candidatos if t.get("isCanonical")}
     todos = {t["index"] for t in candidatos}
+    try:  # precio por nombre de par: no depende de cómo se alinean las listas de la respuesta
+        mids = post_json(HYPERLIQUID, {"type": "allMids"})
+        mids = mids if isinstance(mids, dict) else {}
+    except Exception:
+        mids = {}
     pares = []  # (volumen, precio, nombre_par, canonico)
     for i, u in enumerate(meta["universe"]):
         a, b = u["tokens"]
         if (a in todos and b in quotes) or (b in todos and a in quotes):
+            nombre = u.get("name", str(i))
             try:
-                px = float(ctxs[i]["markPx"])
-                pares.append((float(ctxs[i].get("dayNtlVlm") or 0), px, u.get("name", str(i)),
-                              bool({a, b} & canonicos)))
-            except (KeyError, ValueError, TypeError):
+                ctx = ctxs[u["index"]] if isinstance(u.get("index"), int) and u["index"] < len(ctxs) else ctxs[i]
+                px = float(mids[nombre]) if nombre in mids else float(ctx["markPx"])
+                pares.append((float(ctx.get("dayNtlVlm") or 0), px, nombre, bool({a, b} & canonicos)))
+            except (KeyError, ValueError, TypeError, IndexError):
                 continue
     if not pares:
         raise ValueError(f"sin par spot para {token}")
@@ -953,9 +959,13 @@ def otra_moneda(moneda, p_btc, ahora, ruta_oi, fecha, fallos, mercado=None, dir_
             spot = hyperliquid_spot(par, float(p.iloc[-1]))
         else:
             spot = kraken_precio(par)
+        fuente_spot = "Hyperliquid spot" if tipo_spot == "hyperliquid_spot" else "Kraken"
     except Exception as e:
-        spot = None
-        if str(e).startswith("ningún par"):  # hay pares pero ninguno encaja: se anota para diagnosticar
+        spot, fuente_spot = None, None
+        cg = ((mercado or {}).get(cfg["coingecko"]) or {}).get("precio_spot_usd")
+        if cg:  # respaldo: precio spot agregado de CoinGecko
+            spot, fuente_spot = float(cg), "CoinGecko (respaldo)"
+        elif str(e).startswith("ningún par"):  # hay pares pero ninguno encaja: se anota para diagnosticar
             fallos.add(f"{k}_contraste_par", limpiar(str(e))[:400])
     spot = validar_precio(p, k, ahora, fallos, spot)
     rel: dict = {}
@@ -968,6 +978,7 @@ def otra_moneda(moneda, p_btc, ahora, ruta_oi, fecha, fallos, mercado=None, dir_
                    "minimo_52s": n(r52.min(), 10), "maximo_52s": n(r52.max(), 10)}
     t, c = tendencia_precio(p), ciclo(p)
     t["precio_spot_contraste_usd"] = spot
+    t["precio_spot_contraste_fuente"] = fuente_spot
     f = fundamentales_cesta(moneda, p, mercado, dir_salida or Path("."), fecha, fallos)
     fam = familias_cesta(t, c, rel, f)
     pr = rel.get("percentil_52s")
