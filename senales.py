@@ -29,7 +29,7 @@ from pathlib import Path
 import pandas as pd
 import requests
 
-VERSION = "1.8.3"
+VERSION = "1.9"
 CM = "https://community-api.coinmetrics.io/v4/timeseries/asset-metrics"
 HYPERLIQUID = "https://api.hyperliquid.xyz/info"
 SIN_DATO = "SIN DATO"
@@ -60,6 +60,7 @@ UMBRALES = {
     "cesta_ingresos_caida_max_pct": -20,    # ingresos 7 d frente a 30 d previos: más caída = actividad hundida
     "cesta_tvl_nativo_estable_pct": -10,    # TVL en unidades nativas a 90 d
     "cesta_fdv_mcap_aviso": 2,              # FDV / capitalización: presión de oferta por desbloquear
+    "sol_mcap_ingresos_max": 20,            # SOL: misma métrica que la cesta, umbral propio (provisional)
     # Eventos de calibración de Bull y Bear (definición común a los agentes)
     "evento_4s_caida_pct": 10,
     "evento_8s_ventana": 8,
@@ -756,7 +757,8 @@ def familias_sol(t, ratio_pct, sol_datos, der, sent, confirmacion_btc) -> dict:
                  None if t["sma200w"] is None else t["precio_referencia_usd"] < t["sma200w"]),
             cond("ratio SOL/BTC en mínimos del rango de 52 semanas",
                  si(ratio_pct, lambda v: v <= u["ratio_percentil_52s_max"])),
-            cond("market cap / fees en mínimos", None),
+            cond("capitalización / ingresos de red anualizados por debajo de 20",
+                 si(sol_datos.get("mcap_sobre_ingresos_anualizados"), lambda v: v < u["sol_mcap_ingresos_max"])),
         ]),
         "capitulacion": familia([
             cond("TVL en USD cae y TVL en SOL estable", tvl),
@@ -875,6 +877,45 @@ def solana_datos(sol_precio, fallos) -> dict:
     return out
 
 
+def valoracion_mercado(moneda: str, m: dict | None, ingresos_7d, dir_salida: Path, fecha: str) -> dict:
+    """Bloque común a las cinco monedas: capitalización, FDV, oferta y capitalización / ingresos.
+
+    Misma fórmula para todas, para que se lean igual. Compara cada moneda consigo misma: lo que
+    DefiLlama llama "ingresos" no significa lo mismo en una cadena que en un protocolo.
+    """
+    out: dict = {}
+    if not (m and m.get("mcap_usd")):
+        return out
+    out["mcap_usd"], out["fdv_usd"] = n(m["mcap_usd"], 0), n(m.get("fdv_usd"), 0)
+    out["oferta_circulante"] = n(m.get("oferta_circulante"), 0)
+    if m.get("fdv_usd"):
+        out["fdv_sobre_mcap"] = pct(m["fdv_usd"] / m["mcap_usd"], 2)
+    h = actualizar_historial(dir_salida / "historial_mcap.csv", fecha, moneda, float(m["mcap_usd"]), "mcap_usd")
+    out["mcap_var_30d_pct"] = var_pct(h, 30)
+    if ingresos_7d:
+        out["mcap_sobre_ingresos_anualizados"] = pct(m["mcap_usd"] / (ingresos_7d * 365), 1)
+    out["mercado_fuente"] = "CoinGecko"
+    return out
+
+
+def fundamentales_btc(mercado: dict | None, dir_salida: Path, fecha: str, fallos: Fallos) -> dict:
+    """Comisiones de BTC (DefiLlama) y valoración común. Informativo: para BTC manda el MVRV."""
+    out: dict = {}
+    s = intenta(fallos, "btc_comisiones", defillama_fees_cadena, "bitcoin", "dailyFees")
+    if s is not None and len(s) > 7:
+        s = s.iloc[:-1]  # el último día suele ir incompleto
+        out["comisiones_media_7d_usd"] = n(s.tail(7).mean(), 0)
+        if len(s) >= 37:
+            out["comisiones_var_vs_30d_previos_pct"] = pct((s.tail(7).mean() / s.iloc[-37:-7].mean() - 1) * 100)
+        out["comisiones_fuente"] = "DefiLlama cadena bitcoin"
+    out.update(valoracion_mercado("BTC", (mercado or {}).get("bitcoin"), out.get("comisiones_media_7d_usd"),
+                                  dir_salida, fecha))
+    if out.get("mcap_sobre_ingresos_anualizados") is not None:
+        out["nota"] = ("ingresos = comisiones de mineros, sin emisión; informativo. "
+                       "La métrica de valoración de BTC es el MVRV (sección onchain).")
+    return out
+
+
 def fundamentales_cesta(moneda: str, p: pd.Series, mercado: dict | None, dir_salida: Path,
                         fecha: str, fallos: Fallos) -> dict:
     """TVL, comisiones, ingresos y capitalización de un activo cesta, con sus fuentes."""
@@ -908,18 +949,8 @@ def fundamentales_cesta(moneda: str, p: pd.Series, mercado: dict | None, dir_sal
         elif len(serie) >= 7:
             out[f"{clave}_media_7d_usd"] = n(serie.tail(7).mean(), 0)
         out[f"{clave}_fuente"] = usado
-    m = (mercado or {}).get(cfg["coingecko"])
-    if m and m.get("mcap_usd"):
-        out["mcap_usd"], out["fdv_usd"] = n(m["mcap_usd"], 0), n(m.get("fdv_usd"), 0)
-        out["oferta_circulante"] = n(m.get("oferta_circulante"), 0)
-        if m.get("fdv_usd") and m["mcap_usd"]:
-            out["fdv_sobre_mcap"] = pct(m["fdv_usd"] / m["mcap_usd"], 2)
-        h = actualizar_historial(dir_salida / "historial_mcap.csv", fecha, moneda, float(m["mcap_usd"]), "mcap_usd")
-        out["mcap_var_30d_pct"] = var_pct(h, 30)
-        ing = out.get("ingresos_media_7d_usd")
-        if ing:
-            out["mcap_sobre_ingresos_anualizados"] = pct(m["mcap_usd"] / (ing * 365), 1)
-        out["mercado_fuente"] = "CoinGecko"
+    out.update(valoracion_mercado(moneda, (mercado or {}).get(cfg["coingecko"]),
+                                  out.get("ingresos_media_7d_usd"), dir_salida, fecha))
     return out
 
 
@@ -1065,6 +1096,9 @@ def construir(ahora: datetime, dir_salida: Path) -> dict:
                 "dias_seguidos_miedo_extremo": dias_miedo(fg), "fuente": "alternative.me"}
     resultado["sentimiento"] = sent
 
+    mercado = intenta(fallos, "coingecko", coingecko_mercado,
+                      ["bitcoin", "solana"] + [CESTA[m]["coingecko"] for m in OTRAS_MONEDAS])
+
     confirmacion_btc = None
     if p_btc is not None:
         spot = intenta(fallos, "kraken_btc", kraken_precio, "XBTUSD")
@@ -1085,7 +1119,8 @@ def construir(ahora: datetime, dir_salida: Path) -> dict:
         resultado["btc"].update({
             "resumen": resumen_activo(t, c, fam, resultado.get("pausa_sistema"), al_dia(t, "btc"),
                                       diario_al_dia(t, "btc")),
-            "tendencia": t, "ciclo": c, "onchain": oc, "derivados": der, "familias": fam,
+            "tendencia": t, "ciclo": c, "onchain": oc, "derivados": der,
+            "fundamentales": fundamentales_btc(mercado, dir_salida, fecha, fallos), "familias": fam,
             "resolucion_eventos": resolucion_eventos(semanal(p_btc))})
     if p_sol is not None:
         spot = intenta(fallos, "kraken_sol", kraken_precio, "SOLUSD")
@@ -1094,6 +1129,8 @@ def construir(ahora: datetime, dir_salida: Path) -> dict:
         t["precio_kraken_contraste_usd"] = spot
         der = derivados("SOL", ahora, ruta_oi, fecha, fallos)
         sd = solana_datos(p_sol, fallos)
+        sd.update(valoracion_mercado("SOL", (mercado or {}).get("solana"), sd.get("ingresos_red_media_7d_usd"),
+                                     dir_salida, fecha))
         ratio_pct = None
         rel: dict = {}
         if p_btc is not None:
@@ -1110,7 +1147,6 @@ def construir(ahora: datetime, dir_salida: Path) -> dict:
                             "derivados": der, "fundamentales": sd, "familias": fam,
                             "resolucion_eventos": resolucion_eventos(semanal(p_sol))}
 
-    mercado = intenta(fallos, "coingecko", coingecko_mercado, [CESTA[m]["coingecko"] for m in OTRAS_MONEDAS])
     resultado["otras_monedas"] = {
         "nota": "Activos cesta: sus tramos siguen a los de SOL según la política; aquí van sus hechos propios.",
         **{m.lower(): otra_moneda(m, p_btc, ahora, ruta_oi, fecha, fallos, mercado, dir_salida, ayer)
