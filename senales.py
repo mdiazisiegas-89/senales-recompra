@@ -29,7 +29,7 @@ from pathlib import Path
 import pandas as pd
 import requests
 
-VERSION = "1.5"
+VERSION = "1.6"
 CM = "https://community-api.coinmetrics.io/v4/timeseries/asset-metrics"
 HYPERLIQUID = "https://api.hyperliquid.xyz/info"
 SIN_DATO = "SIN DATO"
@@ -256,9 +256,9 @@ def hyperliquid(moneda: str, ahora: datetime) -> dict:
     corte = s.index.max() - pd.Timedelta(days=7)
     f7 = s[s.index > corte].mean()
     return {
-        "funding_medio_7d_pct_hora": n(f7 * 100, 6),
-        "funding_medio_7d_anualizado_pct": n(f7 * 24 * 365 * 100, 1),
-        "funding_medio_14d_pct_hora": n(s.mean() * 100, 6),
+        "funding_medio_7d_pct_hora": pct(f7 * 100, 6),
+        "funding_medio_7d_anualizado_pct": pct(f7 * 24 * 365 * 100, 1),
+        "funding_medio_14d_pct_hora": pct(s.mean() * 100, 6),
         "horas_funding_negativo_7d": int((s[s.index > corte] < 0).sum()),
         "open_interest_usd": n(float(ctx["openInterest"]) * float(ctx["markPx"]), 0),
     }
@@ -300,7 +300,7 @@ def resumen_cierres(c: pd.Series, nombre: str, cuantos: int) -> dict:
     return {
         f"ultimo_cierre_{nombre}_fecha": c.index[-1].strftime("%Y-%m-%d") if len(c) else None,
         f"ultimo_cierre_{nombre}_usd": n(c.iloc[-1]) if len(c) else None,
-        f"var_{nombre}_pct": n((c.iloc[-1] / c.iloc[-2] - 1) * 100) if len(c) > 1 else None,
+        f"var_{nombre}_pct": pct((c.iloc[-1] / c.iloc[-2] - 1) * 100) if len(c) > 1 else None,
         f"ultimos_{cuantos}_cierres_{nombre}es": {d.strftime("%Y-%m-%d"): n(v) for d, v in c.tail(cuantos).items()},
     }
 
@@ -329,6 +329,13 @@ def n(x, dec=2):
     return round(x, dec)
 
 
+def pct(x, dec=2):
+    """Porcentajes y ratios: decimales fijos, sin la expansión que usan los precios."""
+    if x is None or pd.isna(x) or not math.isfinite(float(x)):
+        return None
+    return round(float(x), dec)
+
+
 def ultimo(s, i=-1):
     return s.iloc[i] if len(s) >= abs(i) else None
 
@@ -340,7 +347,7 @@ def var_pct(s: pd.Series, dias: int):
     previo = s[s.index <= s.index[-1] - pd.Timedelta(days=dias)]
     if previo.empty or previo.iloc[-1] == 0:
         return None
-    return n((s.iloc[-1] / previo.iloc[-1] - 1) * 100)
+    return pct((s.iloc[-1] / previo.iloc[-1] - 1) * 100)
 
 
 def tendencia_precio(p: pd.Series) -> dict:
@@ -355,7 +362,7 @@ def tendencia_precio(p: pd.Series) -> dict:
         "fecha_ultimo_cierre_semanal": w.index[-1].strftime("%Y-%m-%d"),
         "precio_referencia_usd": n(p.iloc[-1]),
         "cierre_semanal_usd": n(w.iloc[-1]),
-        "var_semanal_pct": n((w.iloc[-1] / w.iloc[-2] - 1) * 100) if len(w) > 1 else None,
+        "var_semanal_pct": pct((w.iloc[-1] / w.iloc[-2] - 1) * 100) if len(w) > 1 else None,
         "var_7d_pct": var_pct(p, 7),
         "var_30d_pct": var_pct(p, 30),
         "sma50d": n(sma50d.iloc[-1]),
@@ -387,8 +394,8 @@ def ciclo(p: pd.Series) -> dict:
         "semanas_desde_maximo": int((w.index[-1] - fecha_max).days / 7),
         "minimo_tras_maximo_usd": n(tras.min()),
         "fecha_minimo": fecha_min.strftime("%Y-%m-%d"),
-        "caida_desde_maximo_pct": n((w.iloc[-1] / w.max() - 1) * 100),
-        "rebote_desde_minimo_pct": n((w.iloc[-1] / tras.min() - 1) * 100),
+        "caida_desde_maximo_pct": pct((w.iloc[-1] / w.max() - 1) * 100),
+        "rebote_desde_minimo_pct": pct((w.iloc[-1] / tras.min() - 1) * 100),
     }
 
 
@@ -435,7 +442,7 @@ def resolucion_eventos(w: pd.Series, semanas: int = 60) -> dict:
     return out
 
 
-def resumen_activo(t: dict, c: dict, fam: dict, pausa_d: dict | None, al_dia: bool) -> dict:
+def resumen_activo(t: dict, c: dict, fam: dict, pausa_sis: dict | None, al_dia: bool) -> dict:
     """Lo que las reglas de Estrategia nombran, en un solo bloque corto."""
     return {
         "precio_referencia_usd": t["precio_referencia_usd"],
@@ -445,7 +452,8 @@ def resumen_activo(t: dict, c: dict, fam: dict, pausa_d: dict | None, al_dia: bo
         "cierre_semanal_al_dia": al_dia,
         "evento_4s_umbral_usd": n(t["cierre_semanal_usd"] * (1 - UMBRALES["evento_4s_caida_pct"] / 100)),
         "familias_cumplidas_de_medibles": {k: f"{v['cumplidas']}/{v['medibles']}" for k, v in fam.items()},
-        "pausa_activa": None if pausa_d is None else pausa_d["activa"],
+        # Condición única del sistema, calculada sobre BTC: congela T3 y T4 en AMBOS activos.
+        "pausa_sistema_activa": None if pausa_sis is None else pausa_sis["activa"],
         "semanas_desde_maximo": c["semanas_desde_maximo"],
         "caida_desde_maximo_pct": c["caida_desde_maximo_pct"],
         "rebote_desde_minimo_pct": c["rebote_desde_minimo_pct"],
@@ -465,8 +473,8 @@ def condiciones_planas(doc: dict) -> dict:
         for fam, f in (a.get("familias") or {}).items():
             for c in f["condiciones"]:
                 out[f"{activo}.{fam}.{c['condicion']}"] = c["cumple"]
-        if a.get("pausa"):
-            out[f"{activo}.pausa_activa"] = a["pausa"]["activa"]
+    if (doc.get("pausa_sistema") or {}).get("activa") is not None:
+        out["pausa_sistema_activa"] = doc["pausa_sistema"]["activa"]
     return out
 
 
@@ -747,7 +755,7 @@ def solana_datos(sol_precio, fallos) -> dict:
         if s is not None and len(s) > 7:
             s = s.iloc[:-1]  # el último día suele ir incompleto
             out[f"{clave}_media_7d_usd"] = n(s.tail(7).mean(), 0)
-            out[f"{clave}_var_vs_30d_previos_pct"] = n((s.tail(7).mean() / s.iloc[-37:-7].mean() - 1) * 100)
+            out[f"{clave}_var_vs_30d_previos_pct"] = pct((s.tail(7).mean() / s.iloc[-37:-7].mean() - 1) * 100)
     s = intenta(fallos, "stablecoins_solana", defillama_stablecoins, "Solana")
     if s is not None and len(s):
         out["stablecoins_solana_usd"] = n(s.iloc[-1], 0)
@@ -765,7 +773,7 @@ def otra_moneda(moneda, p_btc, ahora, ruta_oi, fecha, fallos) -> dict | None:
         ratio = (p / p_btc).dropna()
         if len(ratio):
             r52 = ratio.tail(364)
-            rel = {"ratio_btc": n(ratio.iloc[-1], 10), "percentil_52s": n((r52 <= ratio.iloc[-1]).mean() * 100, 1)}
+            rel = {"ratio_btc": n(ratio.iloc[-1], 10), "percentil_52s": pct((r52 <= ratio.iloc[-1]).mean() * 100, 1)}
     return {"fuente_precio": "Hyperliquid, perpetuo (no es precio spot)",
             "primer_dato": p.index[0].strftime("%Y-%m-%d"),
             "tendencia": tendencia_precio(p), "ciclo": ciclo(p), "ratio_btc": rel,
@@ -838,12 +846,12 @@ def construir(ahora: datetime, dir_salida: Path) -> dict:
         if fuente_rp:
             oc["realized_fuente"] = fuente_rp
         if rp is not None:
-            resultado["btc"]["pausa"] = intenta(fallos, "btc_pausa", pausa, p_btc, rp)
+            resultado["pausa_sistema"] = intenta(fallos, "btc_pausa", pausa, p_btc, rp)
         fam = familias_btc(t, oc, der, sent, hash_rate, p_btc)
         confirmacion_btc = fam["confirmacion"]["cumplidas"] > 0 if fam["confirmacion"]["medibles"] else None
         c = ciclo(p_btc)
         resultado["btc"].update({
-            "resumen": resumen_activo(t, c, fam, resultado["btc"].get("pausa"), al_dia(t, "btc")),
+            "resumen": resumen_activo(t, c, fam, resultado.get("pausa_sistema"), al_dia(t, "btc")),
             "tendencia": t, "ciclo": c, "onchain": oc, "derivados": der, "familias": fam,
             "resolucion_eventos": resolucion_eventos(semanal(p_btc))})
     if p_sol is not None:
@@ -858,12 +866,12 @@ def construir(ahora: datetime, dir_salida: Path) -> dict:
         if p_btc is not None:
             ratio = (p_sol / p_btc).dropna()
             r52 = ratio.tail(364)
-            ratio_pct = n((r52 <= ratio.iloc[-1]).mean() * 100, 1)
+            ratio_pct = pct((r52 <= ratio.iloc[-1]).mean() * 100, 1)
             rel = {"ratio_sol_btc": n(ratio.iloc[-1], 6), "percentil_52s": ratio_pct,
                    "minimo_52s": n(r52.min(), 6), "maximo_52s": n(r52.max(), 6)}
         fam = familias_sol(t, ratio_pct, sd, der, sent, confirmacion_btc)
         c = ciclo(p_sol)
-        resultado["sol"] = {"resumen": resumen_activo(t, c, fam, None, al_dia(t, "sol")),
+        resultado["sol"] = {"resumen": resumen_activo(t, c, fam, resultado.get("pausa_sistema"), al_dia(t, "sol")),
                             "tendencia": t, "ciclo": c, "ratio_sol_btc": rel,
                             "derivados": der, "fundamentales": sd, "familias": fam,
                             "resolucion_eventos": resolucion_eventos(semanal(p_sol))}
@@ -938,7 +946,7 @@ def a_markdown(doc: dict) -> str:
         o.append(f"\n## {activo.upper()}")
         if a.get("resumen"):
             o += tabla("Resumen para Estrategia", a["resumen"])
-        for clave in ("tendencia", "ciclo", "onchain", "derivados", "pausa", "ratio_sol_btc", "fundamentales"):
+        for clave in ("tendencia", "ciclo", "onchain", "derivados", "ratio_sol_btc", "fundamentales"):
             if a.get(clave):
                 o += tabla(clave.capitalize(), a[clave])
         for nombre, f in (a.get("familias") or {}).items():
@@ -951,6 +959,8 @@ def a_markdown(doc: dict) -> str:
             o.append("\n### Resolución de eventos (últimas 30 semanas)\n\n| Cierre | USD | Evento 4 s | Evento 8 s |\n|---|---|---|---|")
             for fecha, r in list(res.items())[-30:]:
                 o.append(f"| {fecha} | {r['cierre']} | {r['evento_4s']} | {r['evento_8s']} |")
+    if doc.get("pausa_sistema"):
+        o += tabla("Pausa del sistema (calculada sobre BTC, aplica a BTC y SOL)", doc["pausa_sistema"])
     otras = doc.get("otras_monedas") or {}
     o.append(f"\n## Otras monedas\n\n{otras.get('nota', '')}")
     for m in OTRAS_MONEDAS:
