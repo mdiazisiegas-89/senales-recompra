@@ -29,7 +29,7 @@ from pathlib import Path
 import pandas as pd
 import requests
 
-VERSION = "1.9.2"
+VERSION = "1.9.3"
 CM = "https://community-api.coinmetrics.io/v4/timeseries/asset-metrics"
 HYPERLIQUID = "https://api.hyperliquid.xyz/info"
 SIN_DATO = "SIN DATO"
@@ -93,7 +93,8 @@ CESTA = {
              "spot": ("kraken", "PUMPUSD")},
 }
 OTRAS_MONEDAS = list(CESTA)
-PAUSA_COINGECKO = 2.5   # segundos entre llamadas de historial (API gratuita sin clave)
+PAUSA_COINGECKO = 4.0             # segundos entre llamadas de historial (API gratuita sin clave)
+PAUSA_REINTENTO_COINGECKO = 60.0  # el límite gratuito se renueva por minuto: segunda ronda tras esperar
 # Solo los precios son críticos. Si falta el precio realizado (o la oferta, que solo sirve
 # para calcularlo), el archivo sale PARCIAL y la pausa en SIN DATO.
 CRITICOS = ["btc_precio", "sol_precio"]
@@ -392,18 +393,26 @@ def anadir_historiales(mercado: dict | None, ids: list[str], fallos: Fallos) -> 
     """Mete en mercado[id]['historial_mcap'] el último año de capitalización. Un fallo por bloque."""
     if not mercado:
         return
-    malos = []
-    for i, id_cg in enumerate(ids):
-        if id_cg not in mercado:
-            continue
-        if i and PAUSA_COINGECKO:
-            time.sleep(PAUSA_COINGECKO)
-        try:
-            mercado[id_cg]["historial_mcap"] = coingecko_historial_mcap(id_cg)
-        except Exception as e:
-            malos.append(f"{id_cg}: {type(e).__name__}")
-    if malos:
-        fallos.add("coingecko_historial", limpiar("; ".join(malos)))
+    pendientes = [i for i in ids if i in mercado]
+    motivos: dict = {}
+    for ronda in range(2):
+        if ronda and pendientes and PAUSA_REINTENTO_COINGECKO:
+            time.sleep(PAUSA_REINTENTO_COINGECKO)
+        fallidos = []
+        for j, id_cg in enumerate(pendientes):
+            if j and PAUSA_COINGECKO:
+                time.sleep(PAUSA_COINGECKO)
+            try:
+                mercado[id_cg]["historial_mcap"] = coingecko_historial_mcap(id_cg)
+                motivos.pop(id_cg, None)
+            except Exception as e:
+                fallidos.append(id_cg)
+                motivos[id_cg] = f"{type(e).__name__} {e}"[:80]
+        pendientes = fallidos
+        if not pendientes:
+            break
+    if pendientes:
+        fallos.add("coingecko_historial", limpiar("; ".join(f"{i}: {motivos[i]}" for i in pendientes)))
 
 
 def primera_que_funcione(candidatos, f, *args):
