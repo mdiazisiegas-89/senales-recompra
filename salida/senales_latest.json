@@ -1,36 +1,19 @@
 {
-  "snapshot_id": "9c6ef499d5bb",
+  "snapshot_id": "fc0884e2a390",
   "version_script": "1.6",
-  "generado_utc": "2026-11-02T11:10:46Z",
-  "valido_hasta_utc": "2026-11-03T23:10:46Z",
-  "estado": "PARCIAL",
+  "generado_utc": "2026-11-02T11:19:44Z",
+  "valido_hasta_utc": "2026-11-03T23:19:44Z",
+  "estado": "OK",
   "fallos_criticos": [],
-  "fallos": [
-    {
-      "clave": "fred_DFII10",
-      "motivo": "ReadTimeout: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
-    },
-    {
-      "clave": "fred_DGS10",
-      "motivo": "omitido: FRED no respondió en la serie anterior"
-    },
-    {
-      "clave": "fred_DTWEXBGS",
-      "motivo": "omitido: FRED no respondió en la serie anterior"
-    },
-    {
-      "clave": "fred_WM2NS",
-      "motivo": "omitido: FRED no respondió en la serie anterior"
-    }
-  ],
+  "fallos": [],
   "avisos": [
     "Precio realizado tomado de Coin Metrics CapMVRVCur. Antes fallaron: Coin Metrics CapRealUSD: HTTPError: 403 Client Error: Forbidden for url: https://community-api.coinmetrics.io/v4/timeseries/as"
   ],
   "aviso": "Solo datos y condiciones objetivas. Lo que no aparece es SIN DATO.",
   "ultimo_domingo_cerrado": "2026-11-01",
   "cambios_desde_archivo_anterior": {
-    "archivo_anterior_snapshot": "dde3bdbcf240",
-    "archivo_anterior_generado": "2026-11-02T11:03:16Z",
+    "archivo_anterior_snapshot": "9c6ef499d5bb",
+    "archivo_anterior_generado": "2026-11-02T11:10:46Z",
     "condiciones_cambiadas": []
   },
   "cambios_desde_hace_7_dias": {
@@ -187,7 +170,7 @@
         "2024-12-31": 93389.73,
         "2025-12-31": 87516.98
       },
-      "precio_kraken_contraste_usd": 77813.2
+      "precio_kraken_contraste_usd": 77750.2
     },
     "ciclo": {
       "maximo_cierre_semanal_usd": 123523.77,
@@ -217,7 +200,7 @@
       "funding_medio_7d_anualizado_pct": 10.7,
       "funding_medio_14d_pct_hora": 0.001167,
       "horas_funding_negativo_7d": 2,
-      "open_interest_usd": 3142590373.0,
+      "open_interest_usd": 3142167664.0,
       "oi_var_7d_pct": null,
       "oi_var_30d_pct": null,
       "fuente": "Hyperliquid (un solo mercado, no agregado)"
@@ -729,7 +712,7 @@
         "2024-12-31": 189.36,
         "2025-12-31": 124.58
       },
-      "precio_kraken_contraste_usd": 93.88
+      "precio_kraken_contraste_usd": 93.78
     },
     "ciclo": {
       "maximo_cierre_semanal_usd": 253.53,
@@ -751,7 +734,7 @@
       "funding_medio_7d_anualizado_pct": 9.4,
       "funding_medio_14d_pct_hora": 0.001011,
       "horas_funding_negativo_7d": 9,
-      "open_interest_usd": 528713782.0,
+      "open_interest_usd": 527691979.0,
       "oi_var_7d_pct": null,
       "oi_var_30d_pct": null,
       "fuente": "Hyperliquid (un solo mercado, no agregado)"
@@ -1153,6 +1136,30 @@
     }
   },
   "macro": {
+    "tipo_real_10a_pct": {
+      "valor": 2.63,
+      "fecha": "2026-10-29",
+      "var_30d_pct": -9.62,
+      "fuente": "FRED DFII10"
+    },
+    "bono_10a_pct": {
+      "valor": 4.98,
+      "fecha": "2026-10-29",
+      "var_30d_pct": -5.32,
+      "fuente": "FRED DGS10"
+    },
+    "dolar_amplio_fed_no_es_dxy": {
+      "valor": 121.32,
+      "fecha": "2026-10-23",
+      "var_30d_pct": 1.0,
+      "fuente": "FRED DTWEXBGS"
+    },
+    "m2_eeuu_no_es_global_mm_usd": {
+      "valor": 23508.0,
+      "fecha": "2026-10-05",
+      "var_30d_pct": 1.06,
+      "fuente": "FRED WM2NS"
+    },
     "stablecoins_total_usd": {
       "valor": 297744901052.0,
       "fecha": "2026-11-02",
@@ -1285,7 +1292,7 @@
         "funding_medio_7d_anualizado_pct": 9.0,
         "funding_medio_14d_pct_hora": 0.000834,
         "horas_funding_negativo_7d": 13,
-        "open_interest_usd": 29909009.0,
+        "open_interest_usd": 29865560.0,
         "oi_var_7d_pct": null,
         "oi_var_30d_pct": null,
         "fuente": "Hyperliquid (un solo mercado, no agregado)"
@@ -1399,7 +1406,7 @@
         "funding_medio_7d_anualizado_pct": 23.3,
         "funding_medio_14d_pct_hora": 0.001747,
         "horas_funding_negativo_7d": 5,
-        "open_interest_usd": 1923704901.0,
+        "open_interest_usd": 1924614880.0,
         "oi_var_7d_pct": null,
         "oi_var_30d_pct": null,
         "fuente": "Hyperliquid (un solo mercado, no agregado)"
@@ -1505,7 +1512,7 @@
         "funding_medio_7d_anualizado_pct": 9.9,
         "funding_medio_14d_pct_hora": 0.000828,
         "horas_funding_negativo_7d": 9,
-        "open_interest_usd": 95482403.0,
+        "open_interest_usd": 95281285.0,
         "oi_var_7d_pct": null,
         "oi_var_30d_pct": null,
         "fuente": "Hyperliquid (un solo mercado, no agregado)"

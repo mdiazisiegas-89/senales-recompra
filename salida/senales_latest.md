@@ -1,18 +1,14 @@
 # Señales 2026-11-02
 
-- Snapshot: `9c6ef499d5bb`
-- Estado: **PARCIAL**
-- Generado: 2026-11-02T11:10:46Z
-- Válido hasta: 2026-11-03T23:10:46Z
-- Fallo `fred_DFII10`: ReadTimeout: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=20)
-- Fallo `fred_DGS10`: omitido: FRED no respondió en la serie anterior
-- Fallo `fred_DTWEXBGS`: omitido: FRED no respondió en la serie anterior
-- Fallo `fred_WM2NS`: omitido: FRED no respondió en la serie anterior
+- Snapshot: `fc0884e2a390`
+- Estado: **OK**
+- Generado: 2026-11-02T11:19:44Z
+- Válido hasta: 2026-11-03T23:19:44Z
 - Aviso: Precio realizado tomado de Coin Metrics CapMVRVCur. Antes fallaron: Coin Metrics CapRealUSD: HTTPError: 403 Client Error: Forbidden for url: https://community-api.coinmetrics.io/v4/timeseries/as
 
 ## Cambios desde el archivo anterior
 
-Ninguna condición ha cambiado desde el snapshot `dde3bdbcf240` (2026-11-02T11:03:16Z).
+Ninguna condición ha cambiado desde el snapshot `9c6ef499d5bb` (2026-11-02T11:10:46Z).
 
 ## Cambios en los últimos 7 días
 
@@ -63,7 +59,7 @@ Sin archivo de referencia.
 | ultimo_cierre_anual_fecha | 2025-12-31 |
 | ultimo_cierre_anual_usd | 87516.98 |
 | var_anual_pct | -6.29 |
-| precio_kraken_contraste_usd | 77813.2 |
+| precio_kraken_contraste_usd | 77750.2 |
 
 ultimos_30_cierres_semanales: 2026-04-12 = 70685.37, 2026-04-19 = 73905.2, 2026-04-26 = 78538.77, 2026-05-03 = 78649.17, 2026-05-10 = 82256.78, 2026-05-17 = 77497.7, 2026-05-24 = 76950.99, 2026-05-31 = 73599.56, 2026-06-07 = 63158.25, 2026-06-14 = 65615.33, 2026-06-21 = 63365.44, 2026-06-28 = 59516.67, 2026-07-05 = 63619.88, 2026-07-12 = 63752.27, 2026-07-19 = 64653.05, 2026-07-26 = 65328.79, 2026-08-02 = 63445.68, 2026-08-09 = 64864.93, 2026-08-16 = 62818.41, 2026-08-23 = 77593.03, 2026-08-30 = 77689.19, 2026-09-06 = 80319.97, 2026-09-13 = 76759.26, 2026-09-20 = 81194.74, 2026-09-27 = 84392.47, 2026-10-04 = 86520.8, 2026-10-11 = 83636.61, 2026-10-18 = 81935.17, 2026-10-25 = 80038.91, 2026-11-01 = 78135.08
 
@@ -108,7 +104,7 @@ ultimos_10_cierres_anuales: 2016-12-31 = 968.97, 2017-12-31 = 13921.48, 2018-12-
 | funding_medio_7d_anualizado_pct | 10.7 |
 | funding_medio_14d_pct_hora | 0.001167 |
 | horas_funding_negativo_7d | 2 |
-| open_interest_usd | 3142590373.0 |
+| open_interest_usd | 3142167664.0 |
 | oi_var_7d_pct | SIN DATO |
 | oi_var_30d_pct | SIN DATO |
 | fuente | Hyperliquid (un solo mercado, no agregado) |
@@ -222,7 +218,7 @@ ultimos_10_cierres_anuales: 2016-12-31 = 968.97, 2017-12-31 = 13921.48, 2018-12-
 | ultimo_cierre_anual_fecha | 2025-12-31 |
 | ultimo_cierre_anual_usd | 124.58 |
 | var_anual_pct | -34.21 |
-| precio_kraken_contraste_usd | 93.88 |
+| precio_kraken_contraste_usd | 93.78 |
 
 ultimos_30_cierres_semanales: 2026-04-12 = 81.5, 2026-04-19 = 83.57, 2026-04-26 = 86.9, 2026-05-03 = 84.04, 2026-05-10 = 96.45, 2026-05-17 = 85.26, 2026-05-24 = 85.19, 2026-05-31 = 82.21, 2026-06-07 = 66.2, 2026-06-14 = 70.85, 2026-06-21 = 72.54, 2026-06-28 = 71.19, 2026-07-05 = 81.56, 2026-07-12 = 76.76, 2026-07-19 = 76.29, 2026-07-26 = 76.63, 2026-08-02 = 73.48, 2026-08-09 = 76.34, 2026-08-16 = 74.5, 2026-08-23 = 95.37, 2026-08-30 = 101.89, 2026-09-06 = 106.49, 2026-09-13 = 99.48, 2026-09-20 = 111.0, 2026-09-27 = 121.91, 2026-10-04 = 121.63, 2026-10-11 = 111.15, 2026-10-18 = 103.94, 2026-10-25 = 101.14, 2026-11-01 = 94.26
 
@@ -250,7 +246,7 @@ ultimos_10_cierres_anuales: 2020-12-31 = 1.51, 2021-12-31 = 170.53, 2022-12-31 =
 | funding_medio_7d_anualizado_pct | 9.4 |
 | funding_medio_14d_pct_hora | 0.001011 |
 | horas_funding_negativo_7d | 9 |
-| open_interest_usd | 528713782.0 |
+| open_interest_usd | 527691979.0 |
 | oi_var_7d_pct | SIN DATO |
 | oi_var_30d_pct | SIN DATO |
 | fuente | Hyperliquid (un solo mercado, no agregado) |
@@ -419,7 +415,7 @@ ultimos_10_cierres_anuales: 2023-12-31 = 0.77657, 2024-12-31 = 4.12, 2025-12-31 
 | funding_medio_7d_anualizado_pct | 9.0 |
 | funding_medio_14d_pct_hora | 0.000834 |
 | horas_funding_negativo_7d | 13 |
-| open_interest_usd | 29909009.0 |
+| open_interest_usd | 29865560.0 |
 | oi_var_7d_pct | SIN DATO |
 | oi_var_30d_pct | SIN DATO |
 | fuente | Hyperliquid (un solo mercado, no agregado) |
@@ -490,7 +486,7 @@ ultimos_10_cierres_anuales: 2024-12-31 = 24.06, 2025-12-31 = 25.45
 | funding_medio_7d_anualizado_pct | 23.3 |
 | funding_medio_14d_pct_hora | 0.001747 |
 | horas_funding_negativo_7d | 5 |
-| open_interest_usd | 1923704901.0 |
+| open_interest_usd | 1924614880.0 |
 | oi_var_7d_pct | SIN DATO |
 | oi_var_30d_pct | SIN DATO |
 | fuente | Hyperliquid (un solo mercado, no agregado) |
@@ -561,7 +557,7 @@ ultimos_10_cierres_anuales: 2025-12-31 = 0.001914
 | funding_medio_7d_anualizado_pct | 9.9 |
 | funding_medio_14d_pct_hora | 0.000828 |
 | horas_funding_negativo_7d | 9 |
-| open_interest_usd | 95482403.0 |
+| open_interest_usd | 95281285.0 |
 | oi_var_7d_pct | SIN DATO |
 | oi_var_30d_pct | SIN DATO |
 | fuente | Hyperliquid (un solo mercado, no agregado) |
@@ -570,6 +566,10 @@ ultimos_10_cierres_anuales: 2025-12-31 = 0.001914
 
 | Dato | Valor | Fecha | Var. 30 d % | Fuente |
 |---|---|---|---|---|
+| tipo_real_10a_pct | 2.63 | 2026-10-29 | -9.62 | FRED DFII10 |
+| bono_10a_pct | 4.98 | 2026-10-29 | -5.32 | FRED DGS10 |
+| dolar_amplio_fed_no_es_dxy | 121.32 | 2026-10-23 | 1.0 | FRED DTWEXBGS |
+| m2_eeuu_no_es_global_mm_usd | 23508.0 | 2026-10-05 | 1.06 | FRED WM2NS |
 | stablecoins_total_usd | 297744901052.0 | 2026-11-02 | -3.01 | DefiLlama |
 
 ### Sentimiento
