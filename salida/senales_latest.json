@@ -1,8 +1,8 @@
 {
-  "snapshot_id": "3653bc84ac42",
-  "version_script": "1.8.3",
-  "generado_utc": "2026-11-02T15:47:43Z",
-  "valido_hasta_utc": "2026-11-04T03:47:43Z",
+  "snapshot_id": "fab77f148755",
+  "version_script": "1.9",
+  "generado_utc": "2026-11-02T16:57:34Z",
+  "valido_hasta_utc": "2026-11-04T04:57:34Z",
   "estado": "OK",
   "fallos_criticos": [],
   "fallos": [],
@@ -12,9 +12,15 @@
   "aviso": "Solo datos y condiciones objetivas. Lo que no aparece es SIN DATO.",
   "ultimo_domingo_cerrado": "2026-11-01",
   "cambios_desde_archivo_anterior": {
-    "archivo_anterior_snapshot": "8e563b36d3f8",
-    "archivo_anterior_generado": "2026-11-02T15:39:30Z",
-    "condiciones_cambiadas": []
+    "archivo_anterior_snapshot": "3653bc84ac42",
+    "archivo_anterior_generado": "2026-11-02T15:47:43Z",
+    "condiciones_cambiadas": [
+      {
+        "clave": "sol.valoracion.capitalización / ingresos de red anualizados por debajo de 20",
+        "antes": null,
+        "ahora": false
+      }
+    ]
   },
   "cambios_desde_hace_7_dias": {
     "archivo_anterior_snapshot": null,
@@ -58,6 +64,7 @@
     "cesta_ingresos_caida_max_pct": -20,
     "cesta_tvl_nativo_estable_pct": -10,
     "cesta_fdv_mcap_aviso": 2,
+    "sol_mcap_ingresos_max": 20,
     "evento_4s_caida_pct": 10,
     "evento_8s_ventana": 8,
     "evento_8s_horizonte": 26
@@ -179,7 +186,7 @@
         "2024-12-31": 93389.73,
         "2025-12-31": 87516.98
       },
-      "precio_kraken_contraste_usd": 77817.2
+      "precio_kraken_contraste_usd": 77353.2
     },
     "ciclo": {
       "maximo_cierre_semanal_usd": 123523.77,
@@ -209,11 +216,24 @@
       "funding_medio_7d_anualizado_pct": 10.7,
       "funding_medio_14d_pct_hora": 0.001167,
       "horas_funding_negativo_7d": 2,
-      "open_interest_usd": 3253313176.0,
-      "volumen_24h_usd": 1658903303.0,
+      "open_interest_usd": 3195500496.0,
+      "volumen_24h_usd": 1902733928.0,
       "oi_var_7d_pct": null,
       "oi_var_30d_pct": null,
       "fuente": "Hyperliquid (un solo mercado, no agregado)"
+    },
+    "fundamentales": {
+      "comisiones_media_7d_usd": 16367.0,
+      "comisiones_var_vs_30d_previos_pct": -53.34,
+      "comisiones_fuente": "DefiLlama cadena bitcoin",
+      "mcap_usd": 1555661404642.0,
+      "fdv_usd": 1555661404642.0,
+      "oferta_circulante": 20105365.0,
+      "fdv_sobre_mcap": 1.0,
+      "mcap_var_30d_pct": null,
+      "mcap_sobre_ingresos_anualizados": 260407.3,
+      "mercado_fuente": "CoinGecko",
+      "nota": "ingresos = comisiones de mineros, sin emisión; informativo. La métrica de valoración de BTC es el MVRV (sección onchain)."
     },
     "familias": {
       "valoracion": {
@@ -621,7 +641,7 @@
       "cierre_semanal_al_dia": true,
       "evento_4s_umbral_usd": 84.83,
       "familias_cumplidas_de_medibles": {
-        "valoracion": "1/2",
+        "valoracion": "1/3",
         "capitulacion": "0/1",
         "derivados": "0/1",
         "sentimiento": "0/1",
@@ -723,7 +743,7 @@
         "2024-12-31": 189.36,
         "2025-12-31": 124.58
       },
-      "precio_kraken_contraste_usd": 94.06
+      "precio_kraken_contraste_usd": 93.25
     },
     "ciclo": {
       "maximo_cierre_semanal_usd": 253.53,
@@ -743,10 +763,10 @@
     "derivados": {
       "funding_medio_7d_pct_hora": 0.001073,
       "funding_medio_7d_anualizado_pct": 9.4,
-      "funding_medio_14d_pct_hora": 0.001018,
+      "funding_medio_14d_pct_hora": 0.001021,
       "horas_funding_negativo_7d": 9,
-      "open_interest_usd": 534169726.0,
-      "volumen_24h_usd": 253052237.0,
+      "open_interest_usd": 530471184.0,
+      "volumen_24h_usd": 274867266.0,
       "oi_var_7d_pct": null,
       "oi_var_30d_pct": null,
       "fuente": "Hyperliquid (un solo mercado, no agregado)"
@@ -756,17 +776,24 @@
       "tvl_fecha": "2026-11-01",
       "tvl_usd_var_90d_pct": 14.68,
       "tvl_en_sol_var_90d_pct": -10.66,
-      "fees_media_7d_usd": 10578205.0,
+      "fees_media_7d_usd": 10578206.0,
       "fees_var_vs_30d_previos_pct": -28.11,
-      "ingresos_red_media_7d_usd": 3768719.0,
+      "ingresos_red_media_7d_usd": 3768720.0,
       "ingresos_red_var_vs_30d_previos_pct": -27.03,
-      "stablecoins_solana_usd": 15357469871.0,
-      "stablecoins_solana_var_30d_pct": -8.09
+      "stablecoins_solana_usd": 15356980061.0,
+      "stablecoins_solana_var_30d_pct": -8.1,
+      "mcap_usd": 55038276199.0,
+      "fdv_usd": 59391092034.0,
+      "oferta_circulante": 590205841.0,
+      "fdv_sobre_mcap": 1.08,
+      "mcap_var_30d_pct": null,
+      "mcap_sobre_ingresos_anualizados": 40.0,
+      "mercado_fuente": "CoinGecko"
     },
     "familias": {
       "valoracion": {
         "cumplidas": 1,
-        "medibles": 2,
+        "medibles": 3,
         "total": 3,
         "condiciones": [
           {
@@ -778,8 +805,8 @@
             "cumple": false
           },
           {
-            "condicion": "market cap / fees en mínimos",
-            "cumple": null
+            "condicion": "capitalización / ingresos de red anualizados por debajo de 20",
+            "cumple": false
           }
         ]
       },
@@ -1173,7 +1200,7 @@
       "fuente": "FRED WM2NS"
     },
     "stablecoins_total_usd": {
-      "valor": 297673351949.0,
+      "valor": 297657351649.0,
       "fecha": "2026-11-02",
       "var_30d_pct": -3.04,
       "var_90d_pct": -0.32,
@@ -1305,7 +1332,7 @@
           "2024-12-31": 4.12,
           "2025-12-31": 1.4
         },
-        "precio_spot_contraste_usd": 0.89,
+        "precio_spot_contraste_usd": 0.8843,
         "precio_spot_contraste_fuente": "Kraken"
       },
       "ciclo": {
@@ -1336,12 +1363,12 @@
         "ingresos_media_7d_usd": 23479.0,
         "ingresos_var_vs_30d_previos_pct": -39.13,
         "ingresos_fuente": "DefiLlama cadena sui",
-        "mcap_usd": 3693602740.0,
-        "fdv_usd": 8923807399.0,
+        "mcap_usd": 3661404696.0,
+        "fdv_usd": 8846016372.0,
         "oferta_circulante": 4139043544.0,
         "fdv_sobre_mcap": 2.42,
         "mcap_var_30d_pct": null,
-        "mcap_sobre_ingresos_anualizados": 431.0,
+        "mcap_sobre_ingresos_anualizados": 427.2,
         "mercado_fuente": "CoinGecko"
       },
       "familias": {
@@ -1400,8 +1427,8 @@
         "funding_medio_7d_anualizado_pct": 8.9,
         "funding_medio_14d_pct_hora": 0.000834,
         "horas_funding_negativo_7d": 13,
-        "open_interest_usd": 30565957.0,
-        "volumen_24h_usd": 8998179.0,
+        "open_interest_usd": 30133192.0,
+        "volumen_24h_usd": 9483556.0,
         "oi_var_7d_pct": null,
         "oi_var_30d_pct": null,
         "fuente": "Hyperliquid (un solo mercado, no agregado)"
@@ -1516,7 +1543,7 @@
           "2024-12-31": 24.06,
           "2025-12-31": 25.45
         },
-        "precio_spot_contraste_usd": 85.94,
+        "precio_spot_contraste_usd": 85.56,
         "precio_spot_contraste_fuente": "Hyperliquid spot"
       },
       "ciclo": {
@@ -1547,12 +1574,12 @@
         "ingresos_media_7d_usd": 2362031.0,
         "ingresos_var_vs_30d_previos_pct": 13.02,
         "ingresos_fuente": "DefiLlama protocolo hyperliquid-perps",
-        "mcap_usd": 20610817231.0,
-        "fdv_usd": 81919061002.0,
+        "mcap_usd": 20435946059.0,
+        "fdv_usd": 81224023926.0,
         "oferta_circulante": 239406814.0,
         "fdv_sobre_mcap": 3.97,
         "mcap_var_30d_pct": null,
-        "mcap_sobre_ingresos_anualizados": 23.9,
+        "mcap_sobre_ingresos_anualizados": 23.7,
         "mercado_fuente": "CoinGecko"
       },
       "familias": {
@@ -1611,8 +1638,8 @@
         "funding_medio_7d_anualizado_pct": 23.5,
         "funding_medio_14d_pct_hora": 0.001748,
         "horas_funding_negativo_7d": 4,
-        "open_interest_usd": 1949172876.0,
-        "volumen_24h_usd": 488828562.0,
+        "open_interest_usd": 1927587644.0,
+        "volumen_24h_usd": 505143121.0,
         "oi_var_7d_pct": null,
         "oi_var_30d_pct": null,
         "fuente": "Hyperliquid (un solo mercado, no agregado)"
@@ -1719,7 +1746,7 @@
         "ultimos_10_cierres_anuales": {
           "2025-12-31": 0.001914
         },
-        "precio_spot_contraste_usd": 0.004164,
+        "precio_spot_contraste_usd": 0.004042,
         "precio_spot_contraste_fuente": "Kraken"
       },
       "ciclo": {
@@ -1745,12 +1772,12 @@
         "ingresos_media_7d_usd": 1174516.0,
         "ingresos_var_vs_30d_previos_pct": -24.33,
         "ingresos_fuente": "DefiLlama protocolo pump.fun",
-        "mcap_usd": 1920680944.0,
-        "fdv_usd": 3444796309.0,
-        "oferta_circulante": 459828161839.0,
+        "mcap_usd": 1862141444.0,
+        "fdv_usd": 3339811769.0,
+        "oferta_circulante": 459825756101.0,
         "fdv_sobre_mcap": 1.79,
         "mcap_var_30d_pct": null,
-        "mcap_sobre_ingresos_anualizados": 4.5,
+        "mcap_sobre_ingresos_anualizados": 4.3,
         "mercado_fuente": "CoinGecko"
       },
       "familias": {
@@ -1809,8 +1836,8 @@
         "funding_medio_7d_anualizado_pct": 9.9,
         "funding_medio_14d_pct_hora": 0.000828,
         "horas_funding_negativo_7d": 9,
-        "open_interest_usd": 99782109.0,
-        "volumen_24h_usd": 31012686.0,
+        "open_interest_usd": 94767001.0,
+        "volumen_24h_usd": 34010408.0,
         "oi_var_7d_pct": null,
         "oi_var_30d_pct": null,
         "fuente": "Hyperliquid (un solo mercado, no agregado)"
