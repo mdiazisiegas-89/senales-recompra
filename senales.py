@@ -29,7 +29,7 @@ from pathlib import Path
 import pandas as pd
 import requests
 
-VERSION = "1.9"
+VERSION = "1.9.1"
 CM = "https://community-api.coinmetrics.io/v4/timeseries/asset-metrics"
 HYPERLIQUID = "https://api.hyperliquid.xyz/info"
 SIN_DATO = "SIN DATO"
@@ -173,8 +173,9 @@ def defillama_tvl_solana():
     return serie_ts([(x["date"], x["tvl"]) for x in d])
 
 
-def defillama_fees_solana(tipo: str):
-    d = get_json("https://api.llama.fi/overview/fees/solana", {
+def defillama_fees_apps(cadena: str, tipo: str):
+    """Suma de las aplicaciones que corren SOBRE la cadena (DEX, préstamos...). No es la red."""
+    d = get_json(f"https://api.llama.fi/overview/fees/{cadena}", {
         "excludeTotalDataChart": "false",
         "excludeTotalDataChartBreakdown": "true", "dataType": tipo})
     return serie_ts(d["totalDataChart"])
@@ -345,8 +346,12 @@ def defillama_chain_tvl(cadena: str) -> pd.Series:
 
 
 def defillama_fees_cadena(slug: str, tipo: str) -> pd.Series:
-    d = get_json(f"https://api.llama.fi/overview/fees/{slug}", {
-        "excludeTotalDataChart": "false", "excludeTotalDataChartBreakdown": "true", "dataType": tipo})
+    """Comisiones o ingresos de la PROPIA red (gas que pagan los usuarios a validadores/mineros).
+
+    Ojo: overview/fees/{cadena} sería la suma de las apps sobre la cadena, otra cosa (ver
+    defillama_fees_apps). Hasta v1.9 se usaba esa por error.
+    """
+    d = get_json(f"https://api.llama.fi/summary/fees/{slug}", {"dataType": tipo})
     return serie_ts(d["totalDataChart"])
 
 
@@ -865,11 +870,17 @@ def solana_datos(sol_precio, fallos) -> dict:
         out["tvl_usd_var_90d_pct"] = var_pct(tvl, 90)
         out["tvl_en_sol_var_90d_pct"] = var_pct((tvl / sol_precio).dropna(), 90)
     for clave, tipo in (("fees", "dailyFees"), ("ingresos_red", "dailyRevenue")):
-        s = intenta(fallos, f"{clave}_solana", defillama_fees_solana, tipo)
+        s = intenta(fallos, f"{clave}_solana", defillama_fees_cadena, "solana", tipo)
         if s is not None and len(s) > 7:
             s = s.iloc[:-1]  # el último día suele ir incompleto
             out[f"{clave}_media_7d_usd"] = n(s.tail(7).mean(), 0)
             out[f"{clave}_var_vs_30d_previos_pct"] = pct((s.tail(7).mean() / s.iloc[-37:-7].mean() - 1) * 100)
+            out[f"{clave}_fuente"] = "DefiLlama red solana"
+    s = intenta(fallos, "fees_apps_solana", defillama_fees_apps, "solana", "dailyFees")
+    if s is not None and len(s) > 7:  # informativo: actividad del ecosistema, no de la red
+        s = s.iloc[:-1]
+        out["fees_apps_ecosistema_media_7d_usd"] = n(s.tail(7).mean(), 0)
+        out["fees_apps_ecosistema_var_vs_30d_previos_pct"] = pct((s.tail(7).mean() / s.iloc[-37:-7].mean() - 1) * 100)
     s = intenta(fallos, "stablecoins_solana", defillama_stablecoins, "Solana")
     if s is not None and len(s):
         out["stablecoins_solana_usd"] = n(s.iloc[-1], 0)
@@ -907,7 +918,7 @@ def fundamentales_btc(mercado: dict | None, dir_salida: Path, fecha: str, fallos
         out["comisiones_media_7d_usd"] = n(s.tail(7).mean(), 0)
         if len(s) >= 37:
             out["comisiones_var_vs_30d_previos_pct"] = pct((s.tail(7).mean() / s.iloc[-37:-7].mean() - 1) * 100)
-        out["comisiones_fuente"] = "DefiLlama cadena bitcoin"
+        out["comisiones_fuente"] = "DefiLlama red bitcoin"
     out.update(valoracion_mercado("BTC", (mercado or {}).get("bitcoin"), out.get("comisiones_media_7d_usd"),
                                   dir_salida, fecha))
     if out.get("mcap_sobre_ingresos_anualizados") is not None:
@@ -937,7 +948,7 @@ def fundamentales_cesta(moneda: str, p: pd.Series, mercado: dict | None, dir_sal
             usado = usado and f"DefiLlama protocolo {usado}"
         if serie is None and cfg["fees_chain"]:
             serie, u2, m2 = primera_que_funcione(cfg["fees_chain"], defillama_fees_cadena, tipo)
-            usado, motivos = (u2 and f"DefiLlama cadena {u2}"), motivos + m2
+            usado, motivos = (u2 and f"DefiLlama red {u2}"), motivos + m2
         if serie is None:
             if cfg["fees_protocolo"] or cfg["fees_chain"]:
                 fallos.add(f"{k}_{clave}", " | ".join(motivos))
