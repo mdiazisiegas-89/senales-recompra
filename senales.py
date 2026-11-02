@@ -29,7 +29,7 @@ from pathlib import Path
 import pandas as pd
 import requests
 
-VERSION = "1.6"
+VERSION = "1.7"
 CM = "https://community-api.coinmetrics.io/v4/timeseries/asset-metrics"
 HYPERLIQUID = "https://api.hyperliquid.xyz/info"
 SIN_DATO = "SIN DATO"
@@ -442,11 +442,13 @@ def resolucion_eventos(w: pd.Series, semanas: int = 60) -> dict:
     return out
 
 
-def resumen_activo(t: dict, c: dict, fam: dict, pausa_sis: dict | None, al_dia: bool) -> dict:
+def resumen_activo(t: dict, c: dict, fam: dict, pausa_sis: dict | None, al_dia: bool,
+                   diario_al_dia: bool | None = None) -> dict:
     """Lo que las reglas de Estrategia nombran, en un solo bloque corto."""
     return {
         "precio_referencia_usd": t["precio_referencia_usd"],
         "precio_referencia_fecha": t["fecha_ultimo_dato"],
+        "dato_diario_al_dia": diario_al_dia,
         "cierre_semanal_usd": t["cierre_semanal_usd"],
         "cierre_semanal_fecha": t["fecha_ultimo_cierre_semanal"],
         "cierre_semanal_al_dia": al_dia,
@@ -815,6 +817,16 @@ def construir(ahora: datetime, dir_salida: Path) -> dict:
                        f"último cierre semanal {t['fecha_ultimo_cierre_semanal']}, se esperaba {domingo:%Y-%m-%d}")
         return ok
 
+    ayer = (pd.Timestamp(ahora).tz_localize(None).normalize() - pd.Timedelta(days=1)).strftime("%Y-%m-%d")
+
+    def diario_al_dia(t: dict, nombre: str) -> bool:
+        """El cierre diario de ayer (UTC) ya está en el archivo."""
+        ok = t["fecha_ultimo_dato"] == ayer
+        if not ok:
+            fallos.add(f"{nombre}_dato_diario_retrasado",
+                       f"último dato diario {t['fecha_ultimo_dato']}, se esperaba {ayer}")
+        return ok
+
     def cm(clave, activo, metrica):
         return intenta(fallos, clave, coinmetrics, activo, metrica)
 
@@ -851,7 +863,8 @@ def construir(ahora: datetime, dir_salida: Path) -> dict:
         confirmacion_btc = fam["confirmacion"]["cumplidas"] > 0 if fam["confirmacion"]["medibles"] else None
         c = ciclo(p_btc)
         resultado["btc"].update({
-            "resumen": resumen_activo(t, c, fam, resultado.get("pausa_sistema"), al_dia(t, "btc")),
+            "resumen": resumen_activo(t, c, fam, resultado.get("pausa_sistema"), al_dia(t, "btc"),
+                                      diario_al_dia(t, "btc")),
             "tendencia": t, "ciclo": c, "onchain": oc, "derivados": der, "familias": fam,
             "resolucion_eventos": resolucion_eventos(semanal(p_btc))})
     if p_sol is not None:
@@ -871,7 +884,8 @@ def construir(ahora: datetime, dir_salida: Path) -> dict:
                    "minimo_52s": n(r52.min(), 6), "maximo_52s": n(r52.max(), 6)}
         fam = familias_sol(t, ratio_pct, sd, der, sent, confirmacion_btc)
         c = ciclo(p_sol)
-        resultado["sol"] = {"resumen": resumen_activo(t, c, fam, resultado.get("pausa_sistema"), al_dia(t, "sol")),
+        resultado["sol"] = {"resumen": resumen_activo(t, c, fam, resultado.get("pausa_sistema"), al_dia(t, "sol"),
+                                                      diario_al_dia(t, "sol")),
                             "tendencia": t, "ciclo": c, "ratio_sol_btc": rel,
                             "derivados": der, "fundamentales": sd, "familias": fam,
                             "resolucion_eventos": resolucion_eventos(semanal(p_sol))}
