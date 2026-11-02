@@ -29,7 +29,7 @@ from pathlib import Path
 import pandas as pd
 import requests
 
-VERSION = "1.8"
+VERSION = "1.8.1"
 CM = "https://community-api.coinmetrics.io/v4/timeseries/asset-metrics"
 HYPERLIQUID = "https://api.hyperliquid.xyz/info"
 SIN_DATO = "SIN DATO"
@@ -299,13 +299,25 @@ def hyperliquid_velas(moneda: str, ahora: datetime) -> pd.Series:
 def hyperliquid_spot(token: str) -> float:
     """Precio spot en Hyperliquid del par token/USDC."""
     meta, ctxs = post_json(HYPERLIQUID, {"type": "spotMetaAndAssetCtxs"})
-    idx = {t["name"]: t["index"] for t in meta["tokens"]}
-    if token not in idx or "USDC" not in idx:
+    # Puede haber varios tokens con el mismo nombre (réplicas no canónicas): se prueban todos,
+    # los canónicos primero, y entre los pares USDC encontrados gana el de mayor volumen.
+    candidatos = [t for t in meta["tokens"] if t["name"] == token]
+    usdc = [t["index"] for t in meta["tokens"] if t["name"] == "USDC"]
+    if not candidatos or not usdc:
         raise ValueError(f"sin par spot para {token}")
+    canonicos = [t["index"] for t in candidatos if t.get("isCanonical")]
+    indices = set(canonicos or [t["index"] for t in candidatos])
+    pares = []
     for i, u in enumerate(meta["universe"]):
-        if set(u["tokens"]) == {idx[token], idx["USDC"]}:
-            return float(ctxs[i]["markPx"])
-    raise ValueError(f"sin par spot para {token}")
+        a, b = u["tokens"]
+        if (a in indices and b in usdc) or (b in indices and a in usdc):
+            try:
+                pares.append((float(ctxs[i].get("dayNtlVlm") or 0), float(ctxs[i]["markPx"])))
+            except (KeyError, ValueError, TypeError):
+                continue
+    if not pares:
+        raise ValueError(f"sin par spot para {token}")
+    return max(pares)[1]
 
 
 def defillama_chain_tvl(cadena: str) -> pd.Series:
@@ -786,7 +798,7 @@ def validar_precio(p, nombre, ahora, fallos, spot=None):
         brecha = abs(spot / p.iloc[-1] - 1)
         # La comparación es orientativa: Kraken es precio actual y CM cierre diario.
         if brecha > 0.15:
-            fallos.add(f"{nombre}_contraste", f"Kraken difiere {brecha:.0%} del último cierre")
+            fallos.add(f"{nombre}_contraste", f"el precio spot de contraste difiere {brecha:.0%} del último cierre")
         return n(spot)
     return None
 
