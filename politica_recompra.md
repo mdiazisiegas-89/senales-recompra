@@ -1,7 +1,7 @@
-﻿# POLÍTICA DE RECOMPRA — BTC y SOL
+# POLÍTICA DE RECOMPRA — BTC y SOL
 
 - **Versión:** 1.0
-- **Aprobada por:** Miguel, el __2-nov-2026__________ (fecha)
+- **Aprobada por:** Miguel, el ____________ (fecha)
 - **Entrada en vigor:** 7 días después de la fecha de aprobación (regla de la sección 9)
 - **Sustituye a:** v0.1 provisional, aprobada por chat el 30-oct-2026 sin documento escrito
 
@@ -35,8 +35,8 @@ documento público.
 **Este documento es público: no contiene importes.** El capital se define por referencia y
 los importes viven solo en el ledger privado de Chief of Staff.
 
-- **Capital de recompra del ciclo** = el USDC de la wallet (en Jupiter Lend y líquido) el día de entrada en vigor.
-de esta política, menos la reserva mínima intocable (10 % del patrimonio). Chief of
+- **Capital de recompra del ciclo** = el USDC depositado en Jupiter Lend el día de entrada en
+  vigor de esta política, menos la reserva mínima intocable (10 % del patrimonio). Chief of
   Staff lo registra ese día como "capital inicial" y a partir de ahí descuenta lo ejecutado.
 - **Reparto por activo** (porcentaje del capital de recompra):
 
@@ -173,39 +173,51 @@ capitulación, que es cuando más tentador resulta.
 
 ## 10. Activos cesta: HYPE, SUI y PUMP
 
-Entran en la recompra con el reparto de la sección 2, pero **no tienen señales de
-valoración propias**: para ellos no existen realized price, MVRV ni NUPL, su historial es
-corto (HYPE desde diciembre de 2024, PUMP desde julio de 2025) y su precio en el archivo es
-el del perpetuo de Hyperliquid. Por eso:
+Entran en la recompra con el reparto de la sección 2. No tienen las señales on-chain de BTC
+(realized price, MVRV, NUPL) ni probabilidades de Toro y Oso, así que **no tienen desbloqueo
+propio: su tramo RT_n se abre cuando SOL abre RT_n**. Pero sí tienen datos propios en el
+archivo de señales (bloque `otras_monedas`), y esos datos ponen condiciones:
 
-- **Su desbloqueo es el de SOL.** Cuando SOL desbloquea RT_n, se desbloquea también la parte
-  de HYPE, SUI y PUMP de RT_n, con la misma escalera en porcentajes sobre su propio precio de
-  referencia. No tienen P_final, familias ni probabilidades de Toro y Oso.
-- **Veto estructural.** Si OSO documenta en su informe un evento estructural confirmado en
-  uno de estos activos (hackeo, parada de red, insolvencia o incidente grave de la
-  plataforma, deslistado), la parte de ese activo en el tramo se **aplaza** y la decide
-  Miguel. El capital aplazado no se reasigna a otro activo.
-- **Riesgos que Miguel asume al incluirlos**, por escrito para que consten: beta muy superior
-  a BTC y SOL; en HYPE, concentración en una sola plataforma, que es además la fuente de su
-  dato de funding y open interest; en PUMP, dependencia del ciclo de memecoins; en SUI,
-  competencia entre L1 y calendario de desbloqueos.
-- Toro y Oso los analizan en su sección de otras monedas (tesis de régimen y confianza), y
-  Estrategia incluye en la card la parte de cesta de cada tramo de SOL y cualquier veto.
-- Chief of Staff comprueba antes de cada ticket que el activo se puede comprar desde la
-  wallet con liquidez suficiente; si hace falta un puente a otra red, el ticket lo indica
-  como paso previo y Miguel decide.
+**Qué publica el archivo para cada uno:** precio y tendencia, ciclo desde su listado, ratio
+frente a BTC con su percentil de 52 semanas, TVL (SUI y HYPE), comisiones e ingresos,
+capitalización, FDV y oferta circulante, funding y open interest, y tres familias de
+hechos: *valoracion_relativa*, *actividad* y *riesgo_oferta*. Las fuentes y sus límites están
+en el propio archivo (`*_fuente`); el precio es de perpetuo, con contraste spot cuando existe.
+
+**Condiciones para que la parte de un activo cesta entre en un tramo:**
+1. **SOL ha desbloqueado ese mismo tramo** esta semana o antes.
+2. **Techo relativo:** `techo_ratio_btc.supera` es false, es decir, su ratio frente a BTC no
+   está por encima del percentil 80 de 52 semanas. Si lo supera, está caro respecto a BTC y
+   su parte se **aplaza** hasta que baje del techo.
+3. **Para RT1 y RT2** (los tramos de "comprar barato"): su familia *valoracion_relativa* debe
+   estar ACTIVA según la regla de la sección 3. RT3 y RT4 (los de confirmación y reserva)
+   no lo exigen.
+4. **Veto estructural:** si OSO documenta un evento estructural confirmado (hackeo, parada de
+   red, insolvencia o incidente grave de plataforma, deslistado), su parte se aplaza y la
+   decide Miguel.
+5. **Presión de oferta:** si la familia *riesgo_oferta* cumple (FDV más del doble de la
+   capitalización), la parte de ese activo en el tramo se reduce a la **mitad**; el resto
+   queda para el tramo siguiente.
+El capital aplazado o reducido **no se reasigna** a otro activo.
+
+**Riesgos que Miguel asume al incluirlos**, por escrito para que consten: beta muy superior a
+BTC y SOL; en HYPE, concentración en una sola plataforma, que es además la fuente de su dato
+de funding y open interest; en PUMP, dependencia del ciclo de memecoins; en SUI, competencia
+entre L1 y calendario de desbloqueos (que la familia *riesgo_oferta* intenta medir).
+
+Toro y Oso los analizan con sus familias en la sección de otras monedas; Estrategia aplica
+estas cinco condiciones en la card y escribe el resultado por activo; Chief of Staff comprueba
+antes de cada ticket que el activo se puede comprar desde la wallet con liquidez suficiente
+(el archivo trae `volumen_24h_usd`); si hace falta un puente a otra red, el ticket lo indica
+como paso previo y Miguel decide.
 
 ## 11. Registro de cambios
 
 | Versión | Fecha | Cambio | Motivo | En vigor desde |
 |---|---|---|---|---|
-| 1.0 | ___2-nov-2026_______ | Versión inicial escrita y firmada. Define la regla de familia ACTIVA, que faltaba en la v0.1; define el retest y el rebote de RT4; escribe la interacción con el de-risk; define el objetivo del sistema (superar el valor de la posición de SOL vendida); incorpora HYPE, SUI y PUMP como activos cesta que siguen al tramo de SOL, con reparto por activo y veto estructural; el capital pasa a definirse por referencia para no publicar importes. No cambia los umbrales de P_final ni los porcentajes RT1–RT4 de la v0.1. | Sin la regla de familia, RT1 y RT3 no podían desbloquearse nunca; decisión de Miguel del 2-nov sobre la cesta y el objetivo. | Firma + 7 días |
+| 1.0 | __________ | Versión inicial escrita y firmada. Define la regla de familia ACTIVA, que faltaba en la v0.1; define el retest y el rebote de RT4; escribe la interacción con el de-risk; define el objetivo del sistema (superar el valor de la posición de SOL vendida); incorpora HYPE, SUI y PUMP como activos cesta que siguen al tramo de SOL, con reparto por activo, techo relativo frente a BTC, familia de valoración propia para RT1–RT2, veto estructural y reducción por presión de oferta; el capital pasa a definirse por referencia para no publicar importes. No cambia los umbrales de P_final ni los porcentajes RT1–RT4 de la v0.1. | Sin la regla de familia, RT1 y RT3 no podían desbloquearse nunca; decisión de Miguel del 2-nov sobre la cesta y el objetivo. | Firma + 7 días |
 
 ---
 
 *Este documento es un marco de proceso propio de Miguel, no una recomendación de
 inversión ni asesoramiento financiero.*
-
-
-
-
