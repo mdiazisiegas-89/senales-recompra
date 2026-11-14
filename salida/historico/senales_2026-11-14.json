@@ -1,29 +1,135 @@
 {
-  "snapshot_id": "5b16e39542bb",
-  "version_script": "1.9.3",
-  "generado_utc": "2026-11-14T12:18:20Z",
-  "valido_hasta_utc": "2026-11-16T00:18:20Z",
+  "snapshot_id": "244aeab9c05d",
+  "version_script": "2.0.0",
+  "generado_utc": "2026-11-14T12:41:06Z",
+  "valido_hasta_utc": "2026-11-16T00:41:06Z",
   "estado": "OK",
   "fallos_criticos": [],
   "fallos": [],
   "avisos": [
     "Precio realizado tomado de Coin Metrics CapMVRVCur. Antes fallaron: Coin Metrics CapRealUSD: HTTPError: 403 Client Error: Forbidden for url: https://community-api.coinmetrics.io/v4/timeseries/as"
   ],
-  "aviso": "Solo datos y condiciones objetivas. Lo que no aparece es SIN DATO.",
+  "aviso": "Solo datos y condiciones objetivas. Lo que no aparece es SIN DATO. En cada condición sin evaluar, sin_dato_motivo dice si es sin_fuente (no cuenta) o fuente_caida (cuenta como no cumplida). 'activa' aplica la sección 3 de la política v1.1.",
   "ultimo_domingo_cerrado": "2026-11-08",
   "cambios_desde_archivo_anterior": {
-    "archivo_anterior_snapshot": "b6b996bf635d",
-    "archivo_anterior_generado": "2026-11-14T07:27:03Z",
-    "condiciones_cambiadas": []
+    "archivo_anterior_snapshot": "5b16e39542bb",
+    "archivo_anterior_generado": "2026-11-14T12:18:20Z",
+    "condiciones_cambiadas": [
+      {
+        "clave": "btc.valoracion.precio bajo realized price (mismo hecho que MVRV Z < 0 y NUPL < 0)",
+        "antes": null,
+        "ahora": false
+      },
+      {
+        "clave": "btc.valoracion.caída desde el máximo de al menos 50 % (último cierre semanal)",
+        "antes": null,
+        "ahora": false
+      },
+      {
+        "clave": "btc.valoracion.ACTIVA",
+        "antes": null,
+        "ahora": false
+      },
+      {
+        "clave": "btc.capitulacion.ACTIVA",
+        "antes": null,
+        "ahora": false
+      },
+      {
+        "clave": "btc.derivados.ACTIVA",
+        "antes": null,
+        "ahora": false
+      },
+      {
+        "clave": "btc.sentimiento.ACTIVA",
+        "antes": null,
+        "ahora": false
+      },
+      {
+        "clave": "btc.confirmacion.ACTIVA",
+        "antes": null,
+        "ahora": false
+      },
+      {
+        "clave": "btc.suelo.validado",
+        "antes": null,
+        "ahora": true
+      },
+      {
+        "clave": "btc.suelo.fecha_minimo",
+        "antes": null,
+        "ahora": "2026-06-28"
+      },
+      {
+        "clave": "sol.valoracion.ACTIVA",
+        "antes": null,
+        "ahora": false
+      },
+      {
+        "clave": "sol.capitulacion.ACTIVA",
+        "antes": null,
+        "ahora": false
+      },
+      {
+        "clave": "sol.derivados.ACTIVA",
+        "antes": null,
+        "ahora": false
+      },
+      {
+        "clave": "sol.sentimiento.ACTIVA",
+        "antes": null,
+        "ahora": false
+      },
+      {
+        "clave": "sol.confirmacion.RSI semanal saliendo de sobreventa",
+        "antes": null,
+        "ahora": false
+      },
+      {
+        "clave": "sol.confirmacion.familia confirmación de BTC ACTIVA",
+        "antes": null,
+        "ahora": false
+      },
+      {
+        "clave": "sol.confirmacion.ACTIVA",
+        "antes": null,
+        "ahora": false
+      },
+      {
+        "clave": "sol.suelo.validado",
+        "antes": null,
+        "ahora": true
+      },
+      {
+        "clave": "sol.suelo.fecha_minimo",
+        "antes": null,
+        "ahora": "2026-06-07"
+      }
+    ]
   },
   "cambios_desde_hace_7_dias": {
     "archivo_anterior_snapshot": "5f58e318dcd7",
     "archivo_anterior_generado": "2026-11-07T12:55:48Z",
     "condiciones_cambiadas": [
       {
+        "clave": "btc.valoracion.precio bajo realized price (mismo hecho que MVRV Z < 0 y NUPL < 0)",
+        "antes": null,
+        "ahora": false
+      },
+      {
         "clave": "btc.valoracion.precio cerca o bajo la media de 200 semanas",
         "antes": false,
         "ahora": true
+      },
+      {
+        "clave": "btc.valoracion.caída desde el máximo de al menos 50 % (último cierre semanal)",
+        "antes": null,
+        "ahora": false
+      },
+      {
+        "clave": "btc.valoracion.ACTIVA",
+        "antes": null,
+        "ahora": false
       },
       {
         "clave": "btc.capitulacion.LTH-SOPR < 1",
@@ -31,15 +137,91 @@
         "ahora": true
       },
       {
+        "clave": "btc.capitulacion.ACTIVA",
+        "antes": null,
+        "ahora": false
+      },
+      {
+        "clave": "btc.derivados.ACTIVA",
+        "antes": null,
+        "ahora": false
+      },
+      {
+        "clave": "btc.sentimiento.ACTIVA",
+        "antes": null,
+        "ahora": false
+      },
+      {
+        "clave": "btc.confirmacion.ACTIVA",
+        "antes": null,
+        "ahora": false
+      },
+      {
+        "clave": "btc.suelo.validado",
+        "antes": null,
+        "ahora": true
+      },
+      {
+        "clave": "btc.suelo.fecha_minimo",
+        "antes": null,
+        "ahora": "2026-06-28"
+      },
+      {
+        "clave": "sol.valoracion.ACTIVA",
+        "antes": null,
+        "ahora": false
+      },
+      {
+        "clave": "sol.capitulacion.ACTIVA",
+        "antes": null,
+        "ahora": false
+      },
+      {
+        "clave": "sol.derivados.ACTIVA",
+        "antes": null,
+        "ahora": false
+      },
+      {
+        "clave": "sol.sentimiento.ACTIVA",
+        "antes": null,
+        "ahora": false
+      },
+      {
         "clave": "sol.confirmacion.cierre semanal sobre la media de 20 semanas",
         "antes": true,
         "ahora": false
+      },
+      {
+        "clave": "sol.confirmacion.RSI semanal saliendo de sobreventa",
+        "antes": null,
+        "ahora": false
+      },
+      {
+        "clave": "sol.confirmacion.familia confirmación de BTC ACTIVA",
+        "antes": null,
+        "ahora": false
+      },
+      {
+        "clave": "sol.confirmacion.ACTIVA",
+        "antes": null,
+        "ahora": false
+      },
+      {
+        "clave": "sol.suelo.validado",
+        "antes": null,
+        "ahora": true
+      },
+      {
+        "clave": "sol.suelo.fecha_minimo",
+        "antes": null,
+        "ahora": "2026-06-07"
       }
     ]
   },
   "eventos_calibracion": {
     "evento_4s": "En las próximas 4 semanas no habrá un cierre semanal más de un 10 % por debajo del cierre semanal de referencia. Se resuelve a las 4 semanas, o antes si ocurre ese cierre.",
     "evento_8s": "El cierre semanal más bajo de las próximas 26 semanas ocurre dentro de las próximas 8. Se resuelve a las 26 semanas, o antes si un cierre posterior a la semana 8 ya es más bajo.",
+    "evento_ciclo": "Tres escenarios excluyentes que suman 100 %. Referencia: el mínimo del ciclo (suelo.minimo_usd) en la semana de la predicción. A = ningún cierre semanal por debajo de esa referencia hasta el horizonte (el suelo ya está hecho). B = el cierre semanal más bajo hasta el horizonte queda por debajo de la referencia y ocurre en la fecha de corte o antes (suelo nuevo pronto). C = queda por debajo y ocurre después de la fecha de corte (ciclo largo). Fechas en umbrales.ciclo_fecha_*. Se puntúa con el Brier de tres categorías: suma de (probabilidad − resultado)² en A, B y C.",
     "como_puntuar": "Una predicción hecha en la semana del cierre D se puntúa con la fila D de resolucion_eventos. true = ocurrió, false = no ocurrió, pendiente = aún sin resolver. El Brier score es la media de (probabilidad − resultado)²."
   },
   "sin_dato": {
@@ -78,7 +260,17 @@
     "cadena_valoracion_percentil_max": 20,
     "evento_4s_caida_pct": 10,
     "evento_8s_ventana": 8,
-    "evento_8s_horizonte": 26
+    "evento_8s_horizonte": 26,
+    "familia_minimo_activa": 2,
+    "btc_caida_maximo_pct": -50,
+    "suelo_antiguedad_semanas": 4,
+    "suelo_rebote_pct": 15,
+    "suelo_retest_pct": 3,
+    "cesta_tope_condiciones_precio": 2,
+    "lth_sopr_validez_dias": 7,
+    "ciclo_fecha_inicio": "2026-11-08",
+    "ciclo_fecha_corte": "2027-03-28",
+    "ciclo_fecha_horizonte": "2027-09-26"
   },
   "atribucion": "Datos de red y precio: Coin Metrics Community (CC BY-NC 4.0). También DefiLlama, FRED, alternative.me, Hyperliquid, Kraken y BGeometrics.",
   "btc": {
@@ -92,15 +284,23 @@
       "evento_4s_umbral_usd": 67470.95,
       "familias_cumplidas_de_medibles": {
         "valoracion": "1/3",
-        "capitulacion": "1/4",
+        "capitulacion": "1/3",
         "derivados": "0/1",
         "sentimiento": "0/1",
         "confirmacion": "1/3"
       },
+      "familias_activas": {
+        "valoracion": false,
+        "capitulacion": false,
+        "derivados": false,
+        "sentimiento": false,
+        "confirmacion": false
+      },
       "pausa_sistema_activa": false,
       "semanas_desde_maximo": 57,
       "caida_desde_maximo_pct": -39.31,
-      "rebote_desde_minimo_pct": 25.96
+      "rebote_desde_minimo_pct": 25.96,
+      "confirmacion_semanas_seguidas_activa": 0
     },
     "tendencia": {
       "fecha_ultimo_dato": "2026-11-13",
@@ -197,7 +397,7 @@
         "2024-12-31": 93389.73,
         "2025-12-31": 87516.98
       },
-      "precio_kraken_contraste_usd": 67096.8
+      "precio_kraken_contraste_usd": 67111.6
     },
     "ciclo": {
       "maximo_cierre_semanal_usd": 123523.77,
@@ -207,6 +407,19 @@
       "fecha_minimo": "2026-06-28",
       "caida_desde_maximo_pct": -39.31,
       "rebote_desde_minimo_pct": 25.96
+    },
+    "suelo": {
+      "minimo_usd": 59516.67,
+      "fecha_minimo": "2026-06-28",
+      "semanas_antiguedad": 19,
+      "rebote_maximo_desde_minimo_pct": 45.37,
+      "validado": true,
+      "nivel_invalidacion_usd": 59516.67,
+      "ultimo_cierre_sobre_suelo_pct": 25.96,
+      "retest": false,
+      "invalidado_en_ultimo_cierre": false,
+      "ultima_invalidacion_fecha": "2026-06-07",
+      "suelo_perdido_usd": 65733.52
     },
     "onchain": {
       "realized_price_usd": 53762.42,
@@ -227,9 +440,9 @@
       "funding_medio_7d_anualizado_pct": 8.9,
       "funding_medio_14d_pct_hora": 0.001094,
       "horas_funding_negativo_7d": 9,
-      "open_interest_usd": 2557228865.0,
-      "volumen_24h_usd": 3754783912.0,
-      "oi_var_7d_pct": -19.37,
+      "open_interest_usd": 2567058886.0,
+      "volumen_24h_usd": 3728182223.0,
+      "oi_var_7d_pct": -19.06,
       "oi_var_30d_pct": null,
       "fuente": "Hyperliquid (un solo mercado, no agregado)"
     },
@@ -237,14 +450,14 @@
       "comisiones_media_7d_usd": 221387.0,
       "comisiones_var_vs_30d_previos_pct": 6.0,
       "comisiones_fuente": "DefiLlama red bitcoin",
-      "mcap_usd": 1349219763258.0,
-      "fdv_usd": 1349221239151.0,
+      "mcap_usd": 1350951837628.0,
+      "fdv_usd": 1350954793205.0,
       "oferta_circulante": 20111771.0,
       "fdv_sobre_mcap": 1.0,
       "mcap_var_30d_pct": null,
       "valoracion_base": "comisiones de red (sin emisión)",
-      "mcap_sobre_base_anualizada": 16697.0,
-      "mcap_sobre_base_percentil_365d": 14.0,
+      "mcap_sobre_base_anualizada": 16718.4,
+      "mcap_sobre_base_percentil_365d": 14.3,
       "mcap_sobre_base_min_365d": 12124.7,
       "mcap_sobre_base_max_365d": 25376.0,
       "mercado_fuente": "CoinGecko",
@@ -254,31 +467,35 @@
       "valoracion": {
         "cumplidas": 1,
         "medibles": 3,
+        "con_fuente": 3,
         "total": 3,
+        "necesarias_para_activa": 2,
+        "activa": false,
+        "base_debil": false,
         "condiciones": [
           {
-            "condicion": "MVRV Z < 0",
-            "cumple": false
-          },
-          {
-            "condicion": "precio bajo realized price",
+            "condicion": "precio bajo realized price (mismo hecho que MVRV Z < 0 y NUPL < 0)",
             "cumple": false
           },
           {
             "condicion": "precio cerca o bajo la media de 200 semanas",
             "cumple": true
+          },
+          {
+            "condicion": "caída desde el máximo de al menos 50 % (último cierre semanal)",
+            "cumple": false
           }
         ]
       },
       "capitulacion": {
         "cumplidas": 1,
-        "medibles": 4,
-        "total": 4,
+        "medibles": 3,
+        "con_fuente": 3,
+        "total": 3,
+        "necesarias_para_activa": 2,
+        "activa": false,
+        "base_debil": false,
         "condiciones": [
-          {
-            "condicion": "NUPL < 0",
-            "cumple": false
-          },
           {
             "condicion": "LTH-SOPR < 1",
             "cumple": true
@@ -296,7 +513,11 @@
       "derivados": {
         "cumplidas": 0,
         "medibles": 1,
+        "con_fuente": 2,
         "total": 3,
+        "necesarias_para_activa": 2,
+        "activa": false,
+        "base_debil": false,
         "condiciones": [
           {
             "condicion": "funding medio de 7 días negativo",
@@ -304,18 +525,24 @@
           },
           {
             "condicion": "open interest desplomado en 30 días",
-            "cumple": null
+            "cumple": null,
+            "sin_dato_motivo": "fuente_caida"
           },
           {
             "condicion": "grandes liquidaciones de largos",
-            "cumple": null
+            "cumple": null,
+            "sin_dato_motivo": "sin_fuente"
           }
         ]
       },
       "sentimiento": {
         "cumplidas": 0,
         "medibles": 1,
+        "con_fuente": 1,
         "total": 1,
+        "necesarias_para_activa": 1,
+        "activa": false,
+        "base_debil": true,
         "condiciones": [
           {
             "condicion": "Fear & Greed en miedo extremo 14 días o más",
@@ -326,7 +553,11 @@
       "confirmacion": {
         "cumplidas": 1,
         "medibles": 3,
+        "con_fuente": 3,
         "total": 3,
+        "necesarias_para_activa": 2,
+        "activa": false,
+        "base_debil": false,
         "condiciones": [
           {
             "condicion": "cierre semanal sobre la media de 20 semanas",
@@ -644,6 +875,25 @@
         "evento_4s": "pendiente",
         "evento_8s": "pendiente"
       }
+    },
+    "resolucion_ciclo": {
+      "2026-11-08": {
+        "minimo_referencia_usd": 59516.67,
+        "A": "pendiente",
+        "B": "pendiente",
+        "C": "pendiente"
+      }
+    },
+    "frecuencia_historica_eventos": {
+      "desde": "2010-07-18",
+      "evento_4s": {
+        "semanas_resueltas": 848,
+        "ocurrio_pct": 69.6
+      },
+      "evento_8s": {
+        "semanas_resueltas": 830,
+        "ocurrio_pct": 56.7
+      }
     }
   },
   "sol": {
@@ -660,7 +910,14 @@
         "capitulacion": "0/1",
         "derivados": "0/1",
         "sentimiento": "0/1",
-        "confirmacion": "1/2"
+        "confirmacion": "0/3"
+      },
+      "familias_activas": {
+        "valoracion": false,
+        "capitulacion": false,
+        "derivados": false,
+        "sentimiento": false,
+        "confirmacion": false
       },
       "pausa_sistema_activa": false,
       "semanas_desde_maximo": 102,
@@ -758,7 +1015,7 @@
         "2024-12-31": 189.36,
         "2025-12-31": 124.58
       },
-      "precio_kraken_contraste_usd": 75.69
+      "precio_kraken_contraste_usd": 75.65
     },
     "ciclo": {
       "maximo_cierre_semanal_usd": 253.53,
@@ -768,6 +1025,19 @@
       "fecha_minimo": "2026-06-07",
       "caida_desde_maximo_pct": -65.72,
       "rebote_desde_minimo_pct": 31.28
+    },
+    "suelo": {
+      "minimo_usd": 66.2,
+      "fecha_minimo": "2026-06-07",
+      "semanas_antiguedad": 22,
+      "rebote_maximo_desde_minimo_pct": 84.15,
+      "validado": true,
+      "nivel_invalidacion_usd": 66.2,
+      "ultimo_cierre_sobre_suelo_pct": 31.28,
+      "retest": false,
+      "invalidado_en_ultimo_cierre": false,
+      "ultima_invalidacion_fecha": "2026-06-07",
+      "suelo_perdido_usd": 81.33
     },
     "ratio_sol_btc": {
       "ratio_sol_btc": 0.00114307869,
@@ -780,9 +1050,9 @@
       "funding_medio_7d_anualizado_pct": 1.5,
       "funding_medio_14d_pct_hora": 0.000517,
       "horas_funding_negativo_7d": 53,
-      "open_interest_usd": 310191371.0,
-      "volumen_24h_usd": 354870755.0,
-      "oi_var_7d_pct": -38.53,
+      "open_interest_usd": 309826854.0,
+      "volumen_24h_usd": 354065782.0,
+      "oi_var_7d_pct": -38.61,
       "oi_var_30d_pct": null,
       "fuente": "Hyperliquid (un solo mercado, no agregado)"
     },
@@ -801,14 +1071,14 @@
       "fees_apps_ecosistema_var_vs_30d_previos_pct": -26.13,
       "stablecoins_solana_usd": 14140939170.0,
       "stablecoins_solana_var_30d_pct": -6.36,
-      "mcap_usd": 44757125025.0,
-      "fdv_usd": 48235940608.0,
-      "oferta_circulante": 591573848.0,
+      "mcap_usd": 44820628718.0,
+      "fdv_usd": 48304380125.0,
+      "oferta_circulante": 591573846.0,
       "fdv_sobre_mcap": 1.08,
       "mcap_var_30d_pct": null,
       "valoracion_base": "comisiones de red",
-      "mcap_sobre_base_anualizada": 279.8,
-      "mcap_sobre_base_percentil_365d": 65.6,
+      "mcap_sobre_base_anualizada": 280.1,
+      "mcap_sobre_base_percentil_365d": 66.1,
       "mcap_sobre_base_min_365d": 138.3,
       "mcap_sobre_base_max_365d": 398.1,
       "mercado_fuente": "CoinGecko"
@@ -817,7 +1087,11 @@
       "valoracion": {
         "cumplidas": 1,
         "medibles": 3,
+        "con_fuente": 3,
         "total": 3,
+        "necesarias_para_activa": 2,
+        "activa": false,
+        "base_debil": false,
         "condiciones": [
           {
             "condicion": "precio bajo la media de 200 semanas",
@@ -836,7 +1110,11 @@
       "capitulacion": {
         "cumplidas": 0,
         "medibles": 1,
+        "con_fuente": 1,
         "total": 2,
+        "necesarias_para_activa": 1,
+        "activa": false,
+        "base_debil": true,
         "condiciones": [
           {
             "condicion": "TVL en USD cae y TVL en SOL estable",
@@ -844,14 +1122,19 @@
           },
           {
             "condicion": "pico de unstaking",
-            "cumple": null
+            "cumple": null,
+            "sin_dato_motivo": "sin_fuente"
           }
         ]
       },
       "derivados": {
         "cumplidas": 0,
         "medibles": 1,
+        "con_fuente": 2,
         "total": 3,
+        "necesarias_para_activa": 2,
+        "activa": false,
+        "base_debil": false,
         "condiciones": [
           {
             "condicion": "funding medio de 7 días negativo",
@@ -859,18 +1142,24 @@
           },
           {
             "condicion": "open interest desplomado en 30 días",
-            "cumple": null
+            "cumple": null,
+            "sin_dato_motivo": "fuente_caida"
           },
           {
             "condicion": "grandes liquidaciones de largos",
-            "cumple": null
+            "cumple": null,
+            "sin_dato_motivo": "sin_fuente"
           }
         ]
       },
       "sentimiento": {
         "cumplidas": 0,
         "medibles": 1,
+        "con_fuente": 1,
         "total": 1,
+        "necesarias_para_activa": 1,
+        "activa": false,
+        "base_debil": true,
         "condiciones": [
           {
             "condicion": "Fear & Greed en miedo extremo 14 días o más",
@@ -879,17 +1168,25 @@
         ]
       },
       "confirmacion": {
-        "cumplidas": 1,
-        "medibles": 2,
-        "total": 2,
+        "cumplidas": 0,
+        "medibles": 3,
+        "con_fuente": 3,
+        "total": 3,
+        "necesarias_para_activa": 2,
+        "activa": false,
+        "base_debil": false,
         "condiciones": [
           {
             "condicion": "cierre semanal sobre la media de 20 semanas",
             "cumple": false
           },
           {
-            "condicion": "BTC ya en confirmación",
-            "cumple": true
+            "condicion": "RSI semanal saliendo de sobreventa",
+            "cumple": false
+          },
+          {
+            "condicion": "familia confirmación de BTC ACTIVA",
+            "cumple": false
           }
         ]
       }
@@ -1195,6 +1492,25 @@
         "evento_4s": "pendiente",
         "evento_8s": "pendiente"
       }
+    },
+    "resolucion_ciclo": {
+      "2026-11-08": {
+        "minimo_referencia_usd": 66.2,
+        "A": "pendiente",
+        "B": "pendiente",
+        "C": "pendiente"
+      }
+    },
+    "frecuencia_historica_eventos": {
+      "desde": "2020-04-12",
+      "evento_4s": {
+        "semanas_resueltas": 342,
+        "ocurrio_pct": 53.5
+      },
+      "evento_8s": {
+        "semanas_resueltas": 322,
+        "ocurrio_pct": 43.8
+      }
     }
   },
   "macro": {
@@ -1257,6 +1573,11 @@
           "valoracion_relativa": "2/4",
           "actividad": "0/2",
           "riesgo_oferta": "1/1"
+        },
+        "familias_activas": {
+          "valoracion_relativa": true,
+          "actividad": false,
+          "riesgo_oferta": true
         },
         "techo_ratio_btc": {
           "percentil_52s": 29.9,
@@ -1355,7 +1676,7 @@
           "2024-12-31": 4.12,
           "2025-12-31": 1.4
         },
-        "precio_spot_contraste_usd": 0.7697,
+        "precio_spot_contraste_usd": 0.769,
         "precio_spot_contraste_fuente": "Kraken"
       },
       "ciclo": {
@@ -1388,13 +1709,13 @@
         "ingresos_fuente": "DefiLlama red sui",
         "fees_apps_ecosistema_media_7d_usd": 109828.0,
         "fees_apps_ecosistema_var_vs_30d_previos_pct": -0.38,
-        "mcap_usd": 3187768850.0,
-        "fdv_usd": 7701704067.0,
+        "mcap_usd": 3190984678.0,
+        "fdv_usd": 7709473562.0,
         "oferta_circulante": 4139043544.0,
         "fdv_sobre_mcap": 2.42,
         "mcap_var_30d_pct": null,
         "valoracion_base": "comisiones de red",
-        "mcap_sobre_base_anualizada": 3135.0,
+        "mcap_sobre_base_anualizada": 3138.1,
         "mcap_sobre_base_percentil_365d": 80.7,
         "mcap_sobre_base_min_365d": 412.6,
         "mcap_sobre_base_max_365d": 5006.1,
@@ -1404,19 +1725,26 @@
         "valoracion_relativa": {
           "cumplidas": 2,
           "medibles": 4,
+          "con_fuente": 4,
           "total": 4,
+          "necesarias_para_activa": 2,
+          "activa": true,
+          "base_debil": false,
           "condiciones": [
             {
               "condicion": "ratio frente a BTC en el 20 % inferior de 52 semanas",
-              "cumple": false
+              "cumple": false,
+              "grupo": "precio"
             },
             {
               "condicion": "precio bajo la media de 200 días",
-              "cumple": true
+              "cumple": true,
+              "grupo": "precio"
             },
             {
               "condicion": "caída desde su máximo de al menos 70 %",
-              "cumple": true
+              "cumple": true,
+              "grupo": "precio"
             },
             {
               "condicion": "capitalización / comisiones de red en el 20 % más bajo de 12 meses",
@@ -1427,7 +1755,11 @@
         "actividad": {
           "cumplidas": 0,
           "medibles": 2,
+          "con_fuente": 2,
           "total": 2,
+          "necesarias_para_activa": 2,
+          "activa": false,
+          "base_debil": false,
           "condiciones": [
             {
               "condicion": "comisiones de red de 7 días no caen más del 20 % frente a los 30 anteriores",
@@ -1442,7 +1774,11 @@
         "riesgo_oferta": {
           "cumplidas": 1,
           "medibles": 1,
+          "con_fuente": 1,
           "total": 1,
+          "necesarias_para_activa": 1,
+          "activa": true,
+          "base_debil": true,
           "condiciones": [
             {
               "condicion": "FDV / capitalización por encima de 2 (presión de desbloqueos)",
@@ -1456,9 +1792,9 @@
         "funding_medio_7d_anualizado_pct": 4.8,
         "funding_medio_14d_pct_hora": 0.000734,
         "horas_funding_negativo_7d": 37,
-        "open_interest_usd": 20576876.0,
-        "volumen_24h_usd": 10002345.0,
-        "oi_var_7d_pct": -29.11,
+        "open_interest_usd": 20546019.0,
+        "volumen_24h_usd": 9961686.0,
+        "oi_var_7d_pct": -29.22,
         "oi_var_30d_pct": null,
         "fuente": "Hyperliquid (un solo mercado, no agregado)"
       }
@@ -1476,6 +1812,11 @@
           "valoracion_relativa": "0/4",
           "actividad": "2/2",
           "riesgo_oferta": "1/1"
+        },
+        "familias_activas": {
+          "valoracion_relativa": false,
+          "actividad": true,
+          "riesgo_oferta": true
         },
         "techo_ratio_btc": {
           "percentil_52s": 84.3,
@@ -1572,7 +1913,7 @@
           "2024-12-31": 24.06,
           "2025-12-31": 25.45
         },
-        "precio_spot_contraste_usd": 68.56,
+        "precio_spot_contraste_usd": 68.22,
         "precio_spot_contraste_fuente": "Hyperliquid spot"
       },
       "ciclo": {
@@ -1603,13 +1944,13 @@
         "ingresos_media_7d_usd": 1976833.0,
         "ingresos_var_vs_30d_previos_pct": -11.27,
         "ingresos_fuente": "DefiLlama protocolo hyperliquid-perps",
-        "mcap_usd": 16290616372.0,
-        "fdv_usd": 65089733290.0,
+        "mcap_usd": 16267714406.0,
+        "fdv_usd": 64998227674.0,
         "oferta_circulante": 237730949.0,
         "fdv_sobre_mcap": 4.0,
         "mcap_var_30d_pct": null,
         "valoracion_base": "ingresos del protocolo",
-        "mcap_sobre_base_anualizada": 22.6,
+        "mcap_sobre_base_anualizada": 22.5,
         "mcap_sobre_base_percentil_365d": 65.0,
         "mcap_sobre_base_min_365d": 6.0,
         "mcap_sobre_base_max_365d": 42.4,
@@ -1619,19 +1960,26 @@
         "valoracion_relativa": {
           "cumplidas": 0,
           "medibles": 4,
+          "con_fuente": 4,
           "total": 4,
+          "necesarias_para_activa": 2,
+          "activa": false,
+          "base_debil": false,
           "condiciones": [
             {
               "condicion": "ratio frente a BTC en el 20 % inferior de 52 semanas",
-              "cumple": false
+              "cumple": false,
+              "grupo": "precio"
             },
             {
               "condicion": "precio bajo la media de 200 días",
-              "cumple": false
+              "cumple": false,
+              "grupo": "precio"
             },
             {
               "condicion": "caída desde su máximo de al menos 70 %",
-              "cumple": false
+              "cumple": false,
+              "grupo": "precio"
             },
             {
               "condicion": "capitalización / ingresos del protocolo anualizados por debajo de 20",
@@ -1642,7 +1990,11 @@
         "actividad": {
           "cumplidas": 2,
           "medibles": 2,
+          "con_fuente": 2,
           "total": 2,
+          "necesarias_para_activa": 2,
+          "activa": true,
+          "base_debil": false,
           "condiciones": [
             {
               "condicion": "ingresos de 7 días no caen más del 20 % frente a los 30 anteriores",
@@ -1657,7 +2009,11 @@
         "riesgo_oferta": {
           "cumplidas": 1,
           "medibles": 1,
+          "con_fuente": 1,
           "total": 1,
+          "necesarias_para_activa": 1,
+          "activa": true,
+          "base_debil": true,
           "condiciones": [
             {
               "condicion": "FDV / capitalización por encima de 2 (presión de desbloqueos)",
@@ -1671,9 +2027,9 @@
         "funding_medio_7d_anualizado_pct": 7.7,
         "funding_medio_14d_pct_hora": 0.001321,
         "horas_funding_negativo_7d": 21,
-        "open_interest_usd": 1458824626.0,
-        "volumen_24h_usd": 689442908.0,
-        "oi_var_7d_pct": -15.96,
+        "open_interest_usd": 1457364527.0,
+        "volumen_24h_usd": 699312805.0,
+        "oi_var_7d_pct": -16.05,
         "oi_var_30d_pct": null,
         "fuente": "Hyperliquid (un solo mercado, no agregado)"
       }
@@ -1691,6 +2047,11 @@
           "valoracion_relativa": "1/4",
           "actividad": "0/1",
           "riesgo_oferta": "0/1"
+        },
+        "familias_activas": {
+          "valoracion_relativa": false,
+          "actividad": false,
+          "riesgo_oferta": false
         },
         "techo_ratio_btc": {
           "percentil_52s": 81.9,
@@ -1779,7 +2140,7 @@
         "ultimos_10_cierres_anuales": {
           "2025-12-31": 0.001914
         },
-        "precio_spot_contraste_usd": 0.00326,
+        "precio_spot_contraste_usd": 0.003257,
         "precio_spot_contraste_fuente": "Kraken"
       },
       "ciclo": {
@@ -1805,9 +2166,9 @@
         "ingresos_media_7d_usd": 855463.0,
         "ingresos_var_vs_30d_previos_pct": -34.58,
         "ingresos_fuente": "DefiLlama protocolo pump.fun",
-        "mcap_usd": 1499109592.0,
-        "fdv_usd": 2689885701.0,
-        "oferta_circulante": 458581917801.0,
+        "mcap_usd": 1501053293.0,
+        "fdv_usd": 2693381236.0,
+        "oferta_circulante": 458578876050.0,
         "fdv_sobre_mcap": 1.79,
         "mcap_var_30d_pct": null,
         "valoracion_base": "ingresos del protocolo",
@@ -1821,19 +2182,26 @@
         "valoracion_relativa": {
           "cumplidas": 1,
           "medibles": 4,
+          "con_fuente": 4,
           "total": 4,
+          "necesarias_para_activa": 2,
+          "activa": false,
+          "base_debil": false,
           "condiciones": [
             {
               "condicion": "ratio frente a BTC en el 20 % inferior de 52 semanas",
-              "cumple": false
+              "cumple": false,
+              "grupo": "precio"
             },
             {
               "condicion": "precio bajo la media de 200 días",
-              "cumple": false
+              "cumple": false,
+              "grupo": "precio"
             },
             {
               "condicion": "caída desde su máximo de al menos 70 %",
-              "cumple": false
+              "cumple": false,
+              "grupo": "precio"
             },
             {
               "condicion": "capitalización / ingresos del protocolo anualizados por debajo de 20",
@@ -1844,7 +2212,11 @@
         "actividad": {
           "cumplidas": 0,
           "medibles": 1,
+          "con_fuente": 2,
           "total": 2,
+          "necesarias_para_activa": 2,
+          "activa": false,
+          "base_debil": false,
           "condiciones": [
             {
               "condicion": "ingresos de 7 días no caen más del 20 % frente a los 30 anteriores",
@@ -1852,14 +2224,19 @@
             },
             {
               "condicion": "TVL en unidades nativas estable a 90 días",
-              "cumple": null
+              "cumple": null,
+              "sin_dato_motivo": "fuente_caida"
             }
           ]
         },
         "riesgo_oferta": {
           "cumplidas": 0,
           "medibles": 1,
+          "con_fuente": 1,
           "total": 1,
+          "necesarias_para_activa": 1,
+          "activa": false,
+          "base_debil": true,
           "condiciones": [
             {
               "condicion": "FDV / capitalización por encima de 2 (presión de desbloqueos)",
@@ -1873,9 +2250,9 @@
         "funding_medio_7d_anualizado_pct": 4.7,
         "funding_medio_14d_pct_hora": 0.000854,
         "horas_funding_negativo_7d": 35,
-        "open_interest_usd": 46953514.0,
-        "volumen_24h_usd": 38352552.0,
-        "oi_var_7d_pct": -41.35,
+        "open_interest_usd": 47146173.0,
+        "volumen_24h_usd": 39681789.0,
+        "oi_var_7d_pct": -41.11,
         "oi_var_30d_pct": null,
         "fuente": "Hyperliquid (un solo mercado, no agregado)"
       }
