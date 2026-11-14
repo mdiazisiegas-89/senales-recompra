@@ -29,7 +29,7 @@ from pathlib import Path
 import pandas as pd
 import requests
 
-VERSION = "2.0.0"
+VERSION = "2.0.1"
 CM = "https://community-api.coinmetrics.io/v4/timeseries/asset-metrics"
 HYPERLIQUID = "https://api.hyperliquid.xyz/info"
 SIN_DATO = "SIN DATO"
@@ -73,7 +73,7 @@ UMBRALES = {
     "suelo_antiguedad_semanas": 4,          # suelo validado: antigüedad mínima del mínimo...
     "suelo_rebote_pct": 15,                 # ...y rebote mínimo desde él, en cierre semanal
     "suelo_retest_pct": 3,                  # retest: cierre a menos de este % sobre el suelo validado
-    "cesta_tope_condiciones_precio": 2,     # las condiciones de precio de la cesta cuentan como máximo estas
+    "cesta_tope_condiciones_precio": 1,     # de las condiciones de precio de la cesta solo cuenta una (política 10.2)
     "lth_sopr_validez_dias": 7,             # si BGeometrics falla, vale el último valor guardado hasta estos días
     # Evento de ciclo (tres escenarios). Fechas en domingo, que es el cierre semanal.
     "ciclo_fecha_inicio": "2026-11-08",     # primera semana con predicción
