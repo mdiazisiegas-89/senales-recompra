@@ -29,7 +29,7 @@ from pathlib import Path
 import pandas as pd
 import requests
 
-VERSION = "1.9.3"
+VERSION = "2.0.0"
 CM = "https://community-api.coinmetrics.io/v4/timeseries/asset-metrics"
 HYPERLIQUID = "https://api.hyperliquid.xyz/info"
 SIN_DATO = "SIN DATO"
@@ -67,6 +67,18 @@ UMBRALES = {
     "evento_4s_caida_pct": 10,
     "evento_8s_ventana": 8,
     "evento_8s_horizonte": 26,
+    # Política v1.1
+    "familia_minimo_activa": 2,             # familia ACTIVA: cumplidas >= mínimo(2, condiciones con fuente)
+    "btc_caida_maximo_pct": -50,            # caída desde el máximo que cuenta en la valoración de BTC
+    "suelo_antiguedad_semanas": 4,          # suelo validado: antigüedad mínima del mínimo...
+    "suelo_rebote_pct": 15,                 # ...y rebote mínimo desde él, en cierre semanal
+    "suelo_retest_pct": 3,                  # retest: cierre a menos de este % sobre el suelo validado
+    "cesta_tope_condiciones_precio": 2,     # las condiciones de precio de la cesta cuentan como máximo estas
+    "lth_sopr_validez_dias": 7,             # si BGeometrics falla, vale el último valor guardado hasta estos días
+    # Evento de ciclo (tres escenarios). Fechas en domingo, que es el cierre semanal.
+    "ciclo_fecha_inicio": "2026-11-08",     # primera semana con predicción
+    "ciclo_fecha_corte": "2027-03-28",      # hasta aquí, "suelo nuevo pronto"; después, "ciclo largo"
+    "ciclo_fecha_horizonte": "2027-09-26",  # fin del tercer trimestre de 2027: todo se resuelve aquí
 }
 EVENTOS = {
     "evento_4s": "En las próximas 4 semanas no habrá un cierre semanal más de un 10 % por "
@@ -75,11 +87,18 @@ EVENTOS = {
     "evento_8s": "El cierre semanal más bajo de las próximas 26 semanas ocurre dentro de las "
                  "próximas 8. Se resuelve a las 26 semanas, o antes si un cierre posterior a la "
                  "semana 8 ya es más bajo.",
+    "evento_ciclo": "Tres escenarios excluyentes que suman 100 %. Referencia: el mínimo del ciclo "
+                    "(suelo.minimo_usd) en la semana de la predicción. A = ningún cierre semanal por "
+                    "debajo de esa referencia hasta el horizonte (el suelo ya está hecho). B = el cierre "
+                    "semanal más bajo hasta el horizonte queda por debajo de la referencia y ocurre en la "
+                    "fecha de corte o antes (suelo nuevo pronto). C = queda por debajo y ocurre después de "
+                    "la fecha de corte (ciclo largo). Fechas en umbrales.ciclo_fecha_*. Se puntúa con el "
+                    "Brier de tres categorías: suma de (probabilidad − resultado)² en A, B y C.",
     "como_puntuar": "Una predicción hecha en la semana del cierre D se puntúa con la fila D de "
                     "resolucion_eventos. true = ocurrió, false = no ocurrió, pendiente = aún "
                     "sin resolver. El Brier score es la media de (probabilidad − resultado)².",
 }
-# Seguimiento aparte: informativas, fuera de los tramos RT1-RT4.
+# Activos cesta: destinos opcionales de un tramo (política, sección 10). Sin fase de suelo propia.
 # Para cada activo cesta: id de CoinGecko y candidatos de DefiLlama (se prueban en orden; el
 # primero que responda queda registrado como fuente). Vacío = esa métrica no aplica.
 CESTA = {
@@ -595,6 +614,126 @@ def resolucion_eventos(w: pd.Series, semanas: int = 60) -> dict:
     return out
 
 
+def suelo(p: pd.Series) -> dict:
+    """Suelo de referencia del ciclo (sección 4.3 de la política), en cierres semanales.
+
+    Recorre las semanas desde el máximo: el suelo provisional es el cierre más bajo; queda VALIDADO
+    cuando tiene la antigüedad mínima y ha habido el rebote mínimo desde él. Un cierre por debajo
+    de un suelo validado es una invalidación: el nuevo mínimo vuelve a ser provisional.
+    """
+    u, w = UMBRALES, semanal(p)
+    tras = w[w.index >= w.idxmax()]
+    minimo = fecha_min = perdido = ultima_inval = None
+    validado = invalidado_ahora = False
+    for fecha, c in tras.items():
+        invalidado_ahora = False
+        if minimo is None or c < minimo:
+            if validado:
+                ultima_inval, perdido, invalidado_ahora = fecha, minimo, True
+            minimo, fecha_min, validado = c, fecha, False
+        elif not validado:
+            semanas = (fecha - fecha_min).days // 7
+            rebote = (tras[fecha_min:fecha].max() / minimo - 1) * 100
+            validado = semanas >= u["suelo_antiguedad_semanas"] and rebote >= u["suelo_rebote_pct"]
+    distancia = (w.iloc[-1] / minimo - 1) * 100
+    return {
+        "minimo_usd": n(minimo),
+        "fecha_minimo": fecha_min.strftime("%Y-%m-%d"),
+        "semanas_antiguedad": int((w.index[-1] - fecha_min).days // 7),
+        "rebote_maximo_desde_minimo_pct": pct((tras[fecha_min:].max() / minimo - 1) * 100),
+        "validado": bool(validado),
+        "nivel_invalidacion_usd": n(minimo),
+        "ultimo_cierre_sobre_suelo_pct": pct(distancia),
+        "retest": bool(validado and 0 <= distancia < u["suelo_retest_pct"]),
+        "invalidado_en_ultimo_cierre": bool(invalidado_ahora),
+        "ultima_invalidacion_fecha": ultima_inval.strftime("%Y-%m-%d") if ultima_inval is not None else None,
+        "suelo_perdido_usd": n(perdido),
+    }
+
+
+def resolucion_ciclo(w: pd.Series) -> dict:
+    """Tabla de verdad del evento de ciclo (A, B, C), por semana de predicción."""
+    u = UMBRALES
+    inicio, corte, horizonte = (pd.Timestamp(u[f"ciclo_fecha_{k}"]) for k in ("inicio", "corte", "horizonte"))
+    out = {}
+    for fecha in w.index[(w.index >= inicio) & (w.index < horizonte)]:
+        hasta = w[:fecha]
+        ref = hasta[hasta.idxmax():].min()          # mínimo del ciclo visto en la semana de la predicción
+        sig = w[(w.index > fecha) & (w.index <= horizonte)]
+        cerrado = len(w) and w.index[-1] >= horizonte
+        roto = bool(len(sig) and sig.min() < ref)
+        a: object = False if roto else (True if cerrado else "pendiente")
+        b: object = "pendiente"
+        c: object = "pendiente"
+        if cerrado:
+            b = bool(roto and sig.idxmin() <= corte)
+            c = bool(roto and sig.idxmin() > corte)
+        elif not roto and w.index[-1] >= corte:
+            b = False                                  # pasó el corte sin mínimo nuevo: B ya no puede ocurrir
+        out[fecha.strftime("%Y-%m-%d")] = {"minimo_referencia_usd": n(ref), "A": a, "B": b, "C": c}
+    return out
+
+
+def frecuencia_eventos(w: pd.Series) -> dict:
+    """Con qué frecuencia han ocurrido los eventos en toda la historia del activo.
+
+    Es la referencia de "sin información": una probabilidad parecida a esta frecuencia no aporta nada.
+    """
+    r = resolucion_eventos(w, semanas=len(w))
+    out = {"desde": w.index[0].strftime("%Y-%m-%d")}
+    for e in ("evento_4s", "evento_8s"):
+        v = [x[e] for x in r.values() if x[e] != "pendiente"]
+        out[e] = {"semanas_resueltas": len(v), "ocurrio_pct": pct(sum(v) / len(v) * 100, 1) if v else None}
+    return out
+
+
+def semanas_confirmacion_btc(p: pd.Series, hash_rate: pd.Series | None) -> int | None:
+    """Semanas seguidas, hasta el último cierre, con la familia confirmación de BTC ACTIVA.
+
+    Lo pide la revisión de fin de ciclo (11.1). Reconstruye las tres condiciones semana a semana;
+    sin hash rate no se puede reconstruir y sale None.
+    """
+    if hash_rate is None:
+        return None
+    u, w = UMBRALES, semanal(p)
+    sobre_sma = w > w.rolling(20).mean()
+    r = rsi(w)
+    hubo_sobreventa = (r < u["rsi_sobreventa"]).astype(float).shift(1).rolling(u["rsi_ventana_semanas"], min_periods=1).max() > 0
+    sale = hubo_sobreventa & (r >= u["rsi_sobreventa"])
+    bajo = (hash_rate.rolling(30).mean() < hash_rate.rolling(60).mean())
+    bloque = (bajo != bajo.shift()).cumsum()
+    dias = bajo.groupby(bloque).cumcount()
+    recuperadas = ((~bajo) & (dias <= 30) & hash_rate.rolling(60).mean().notna()).reindex(w.index, method="ffill").fillna(False)
+    activa = (sobre_sma.astype(int) + sale.astype(int) + recuperadas.astype(int)) >= u["familia_minimo_activa"]
+    seguidas = 0
+    for v in activa.iloc[::-1]:
+        if not v:
+            break
+        seguidas += 1
+    return seguidas
+
+
+def lth_sopr_con_respaldo(ruta: Path, fecha: str, fallos: Fallos, avisos: list) -> pd.Series | None:
+    """LTH-SOPR de BGeometrics. Si hoy no responde, vale el último valor guardado si es reciente."""
+    s = intenta(fallos, "btc_lth_sopr", bgeometrics, "lth-sopr", True)
+    columnas = ["fecha_consulta", "fecha_dato", "lth_sopr"]
+    df = pd.read_csv(ruta) if ruta.exists() else pd.DataFrame(columns=columnas)
+    if s is not None and len(s):
+        df = df[df["fecha_consulta"] != fecha]
+        df = pd.concat([df, pd.DataFrame([[fecha, s.index[-1].strftime("%Y-%m-%d"), float(s.iloc[-1])]],
+                                         columns=columnas)], ignore_index=True)
+        df.sort_values("fecha_consulta").to_csv(ruta, index=False)
+        return s
+    if len(df):
+        u = df.sort_values("fecha_consulta").iloc[-1]
+        edad = (pd.Timestamp(fecha) - pd.Timestamp(u["fecha_consulta"])).days
+        if edad <= UMBRALES["lth_sopr_validez_dias"]:
+            avisos.append(f"LTH-SOPR: BGeometrics no respondió; se usa el valor guardado el {u['fecha_consulta']} "
+                          f"(dato del {u['fecha_dato']}).")
+            return pd.Series({pd.Timestamp(u["fecha_dato"]): float(u["lth_sopr"])})
+    return None
+
+
 def resumen_activo(t: dict, c: dict, fam: dict, pausa_sis: dict | None, al_dia: bool,
                    diario_al_dia: bool | None = None) -> dict:
     """Lo que las reglas de Estrategia nombran, en un solo bloque corto."""
@@ -607,7 +746,8 @@ def resumen_activo(t: dict, c: dict, fam: dict, pausa_sis: dict | None, al_dia: 
         "cierre_semanal_al_dia": al_dia,
         "evento_4s_umbral_usd": n(t["cierre_semanal_usd"] * (1 - UMBRALES["evento_4s_caida_pct"] / 100)),
         "familias_cumplidas_de_medibles": {k: f"{v['cumplidas']}/{v['medibles']}" for k, v in fam.items()},
-        # Condición única del sistema, calculada sobre BTC: congela T3 y T4 en AMBOS activos.
+        "familias_activas": {k: v["activa"] for k, v in fam.items()},
+        # Condición única del sistema, calculada sobre BTC: congela RT3 y RT4 en todos los activos.
         "pausa_sistema_activa": None if pausa_sis is None else pausa_sis["activa"],
         "semanas_desde_maximo": c["semanas_desde_maximo"],
         "caida_desde_maximo_pct": c["caida_desde_maximo_pct"],
@@ -628,6 +768,11 @@ def condiciones_planas(doc: dict) -> dict:
         for fam, f in (a.get("familias") or {}).items():
             for c in f["condiciones"]:
                 out[f"{activo}.{fam}.{c['condicion']}"] = c["cumple"]
+            if "activa" in f:
+                out[f"{activo}.{fam}.ACTIVA"] = f["activa"]
+        if a.get("suelo"):
+            out[f"{activo}.suelo.validado"] = a["suelo"]["validado"]
+            out[f"{activo}.suelo.fecha_minimo"] = a["suelo"]["fecha_minimo"]
     if (doc.get("pausa_sistema") or {}).get("activa") is not None:
         out["pausa_sistema_activa"] = doc["pausa_sistema"]["activa"]
     return out
@@ -727,14 +872,41 @@ def realizado_btc(p, mcap, oferta, fallos: Fallos, avisos: list):
     return None, None, None
 
 
-def cond(nombre: str, resultado) -> dict:
-    return {"condicion": nombre, "cumple": None if resultado is None else bool(resultado)}
+def cond(nombre: str, resultado, sin_fuente: bool = False, grupo: str | None = None) -> dict:
+    """Una condición. Si no se puede evaluar, dice por qué:
+    sin_fuente   = no existe dato gratuito: no cuenta ni a favor ni en contra.
+    fuente_caida = el dato existe pero hoy no llegó (o falta historia): cuenta como NO cumplida.
+    """
+    c = {"condicion": nombre, "cumple": None if resultado is None else bool(resultado)}
+    if c["cumple"] is None:
+        c["sin_dato_motivo"] = "sin_fuente" if sin_fuente else "fuente_caida"
+    if grupo:
+        c["grupo"] = grupo
+    return c
 
 
-def familia(condiciones: list[dict]) -> dict:
+def familia(condiciones: list[dict], tope_grupo: tuple[str, int] | None = None) -> dict:
+    """Recuento de una familia y si está ACTIVA según la sección 3 de la política.
+
+    ACTIVA = cumplidas >= mínimo(2, condiciones con fuente). `tope_grupo` limita cuántas
+    condiciones de un mismo grupo (hechos derivados del mismo dato) pueden sumar.
+    """
     medibles = [c for c in condiciones if c["cumple"] is not None]
-    return {"cumplidas": sum(c["cumple"] for c in medibles), "medibles": len(medibles),
-            "total": len(condiciones), "condiciones": condiciones}
+    con_fuente = [c for c in condiciones if c.get("sin_dato_motivo") != "sin_fuente"]
+    brutas = sum(c["cumple"] for c in medibles)
+    cumplidas = brutas
+    if tope_grupo:
+        grupo, tope = tope_grupo
+        del_grupo = sum(1 for c in medibles if c["cumple"] and c.get("grupo") == grupo)
+        cumplidas = brutas - max(0, del_grupo - tope)
+    necesarias = min(UMBRALES["familia_minimo_activa"], len(con_fuente))
+    out = {"cumplidas": cumplidas, "medibles": len(medibles), "con_fuente": len(con_fuente),
+           "total": len(condiciones), "necesarias_para_activa": necesarias if con_fuente else None,
+           "activa": (cumplidas >= necesarias) if con_fuente else None,   # None = NO EVALUABLE
+           "base_debil": len(con_fuente) == 1, "condiciones": condiciones}
+    if tope_grupo and brutas != cumplidas:
+        out["cumplidas_sin_tope"] = brutas
+    return out
 
 
 def si(valor, f):
@@ -748,20 +920,22 @@ def rsi_sale_sobreventa(p: pd.Series):
     return bool((r.iloc[:-1] < UMBRALES["rsi_sobreventa"]).any() and r.iloc[-1] >= UMBRALES["rsi_sobreventa"])
 
 
-def familias_btc(t, oc, der, sent, hash_rate, p) -> dict:
+def familias_btc(t, oc, der, sent, hash_rate, p, c) -> dict:
     u = UMBRALES
     recuperacion = None
     if "hash_ribbons_30_bajo_60" in oc:
         recuperacion = (not oc["hash_ribbons_30_bajo_60"]) and oc["hash_ribbons_dias_en_estado"] <= 30
     return {
         "valoracion": familia([
-            cond("MVRV Z < 0", si(oc.get("mvrv_z"), lambda v: v < u["mvrv_z_max"])),
-            cond("precio bajo realized price", oc.get("precio_bajo_realized")),
+            # MVRV Z < 0 y NUPL < 0 son este mismo hecho (capitalización < capitalización realizada):
+            # cuentan una sola vez. Los valores siguen publicados en la sección onchain.
+            cond("precio bajo realized price (mismo hecho que MVRV Z < 0 y NUPL < 0)", oc.get("precio_bajo_realized")),
             cond("precio cerca o bajo la media de 200 semanas",
                  None if t["sma200w"] is None else t["precio_referencia_usd"] <= t["sma200w"] * u["cerca_sma200w_factor"]),
+            cond("caída desde el máximo de al menos 50 % (último cierre semanal)",
+                 c["caida_desde_maximo_pct"] <= u["btc_caida_maximo_pct"]),
         ]),
         "capitulacion": familia([
-            cond("NUPL < 0", si(oc.get("nupl"), lambda v: v < u["nupl_max"])),
             cond("LTH-SOPR < 1", si(oc.get("lth_sopr"), lambda v: v < 1)),
             cond("Puell < 0,5", si(oc.get("puell"), lambda v: v < u["puell_max"])),
             cond("hash ribbons en capitulación", oc.get("hash_ribbons_30_bajo_60")),
@@ -782,7 +956,7 @@ def condiciones_derivados(der: dict) -> list[dict]:
              si(der.get("funding_medio_7d_pct_hora"), lambda v: v < UMBRALES["funding_7d_max"])),
         cond("open interest desplomado en 30 días",
              si(der.get("oi_var_30d_pct"), lambda v: v <= UMBRALES["oi_caida_30d_pct"])),
-        cond("grandes liquidaciones de largos", None),
+        cond("grandes liquidaciones de largos", None, sin_fuente=True),
     ]
 
 
@@ -791,7 +965,7 @@ def condiciones_sentimiento(sent: dict) -> list[dict]:
                  si(sent.get("dias_seguidos_miedo_extremo"), lambda v: v >= UMBRALES["fng_dias_minimos"]))]
 
 
-def familias_sol(t, ratio_pct, sol_datos, der, sent, confirmacion_btc) -> dict:
+def familias_sol(t, ratio_pct, sol_datos, der, sent, confirmacion_btc, p) -> dict:
     u = UMBRALES
     tvl_usd, tvl_sol = sol_datos.get("tvl_usd_var_90d_pct"), sol_datos.get("tvl_en_sol_var_90d_pct")
     tvl = None
@@ -808,13 +982,14 @@ def familias_sol(t, ratio_pct, sol_datos, der, sent, confirmacion_btc) -> dict:
         ]),
         "capitulacion": familia([
             cond("TVL en USD cae y TVL en SOL estable", tvl),
-            cond("pico de unstaking", None),
+            cond("pico de unstaking", None, sin_fuente=True),
         ]),
         "derivados": familia(condiciones_derivados(der)),
         "sentimiento": familia(condiciones_sentimiento(sent)),
         "confirmacion": familia([
             cond("cierre semanal sobre la media de 20 semanas", t["cierre_sobre_sma20w"]),
-            cond("BTC ya en confirmación", confirmacion_btc),
+            cond("RSI semanal saliendo de sobreventa", rsi_sale_sobreventa(p)),
+            cond("familia confirmación de BTC ACTIVA", confirmacion_btc),
         ]),
     }
 
@@ -1047,12 +1222,14 @@ def familias_cesta(t: dict, c: dict, rel: dict, f: dict, tipo: str = "protocolo"
                      si(f.get("ingresos_var_vs_30d_previos_pct"), lambda v: v >= u["cesta_ingresos_caida_max_pct"]))
     return {
         "valoracion_relativa": familia([
-            cond("ratio frente a BTC en el 20 % inferior de 52 semanas", si(pr, lambda v: v <= u["cesta_ratio_percentil_bajo"])),
+            cond("ratio frente a BTC en el 20 % inferior de 52 semanas",
+                 si(pr, lambda v: v <= u["cesta_ratio_percentil_bajo"]), grupo="precio"),
             cond("precio bajo la media de 200 días",
-                 None if t["sma200d"] is None else t["precio_referencia_usd"] < t["sma200d"]),
-            cond("caída desde su máximo de al menos 70 %", c["caida_desde_maximo_pct"] <= u["cesta_caida_maximo_pct"]),
+                 None if t["sma200d"] is None else t["precio_referencia_usd"] < t["sma200d"], grupo="precio"),
+            cond("caída desde su máximo de al menos 70 %",
+                 c["caida_desde_maximo_pct"] <= u["cesta_caida_maximo_pct"], grupo="precio"),
             c_val,
-        ]),
+        ], tope_grupo=("precio", u["cesta_tope_condiciones_precio"])),
         "actividad": familia([
             c_act,
             cond("TVL en unidades nativas estable a 90 días",
@@ -1112,6 +1289,7 @@ def otra_moneda(moneda, p_btc, ahora, ruta_oi, fecha, fallos, mercado=None, dir_
                 "dato_diario_al_dia": diario, "cierre_semanal_usd": t["cierre_semanal_usd"],
                 "cierre_semanal_fecha": t["fecha_ultimo_cierre_semanal"],
                 "familias_cumplidas_de_medibles": {kk: f"{v['cumplidas']}/{v['medibles']}" for kk, v in fam.items()},
+                "familias_activas": {kk: v["activa"] for kk, v in fam.items()},
                 "techo_ratio_btc": techo,
                 "semanas_desde_maximo": c["semanas_desde_maximo"], "caida_desde_maximo_pct": c["caida_desde_maximo_pct"],
                 "rebote_desde_minimo_pct": c["rebote_desde_minimo_pct"]},
@@ -1120,7 +1298,7 @@ def otra_moneda(moneda, p_btc, ahora, ruta_oi, fecha, fallos, mercado=None, dir_
 
 
 NO_DISPONIBLES = {
-    "LTH-SOPR": "BGeometrics no respondió en esta ejecución",
+    "LTH-SOPR": "BGeometrics no respondió y no hay valor guardado de los últimos 7 días",
     "liquidaciones agregadas": "sin fuente gratuita fiable",
     "skew de opciones y mapas de liquidaciones": "no incluidos",
     "reservas y netflows de exchanges": "métrica de pago",
@@ -1195,21 +1373,25 @@ def construir(ahora: datetime, dir_salida: Path) -> dict:
         t["precio_kraken_contraste_usd"] = spot
         der = derivados("BTC", ahora, ruta_oi, fecha, fallos)
         rcap, rp, fuente_rp = realizado_btc(p_btc, mcap, oferta, fallos, avisos)
-        lth = intenta(fallos, "btc_lth_sopr", bgeometrics, "lth-sopr", True)
+        lth = lth_sopr_con_respaldo(dir_salida / "historial_lth_sopr.csv", fecha, fallos, avisos)
         oc = intenta(fallos, "btc_onchain", onchain_btc, p_btc, mcap, rcap, rp, hash_rate, emision, lth) or {}
         if fuente_rp:
             oc["realized_fuente"] = fuente_rp
         if rp is not None:
             resultado["pausa_sistema"] = intenta(fallos, "btc_pausa", pausa, p_btc, rp)
-        fam = familias_btc(t, oc, der, sent, hash_rate, p_btc)
-        confirmacion_btc = fam["confirmacion"]["cumplidas"] > 0 if fam["confirmacion"]["medibles"] else None
         c = ciclo(p_btc)
+        fam = familias_btc(t, oc, der, sent, hash_rate, p_btc, c)
+        confirmacion_btc = fam["confirmacion"]["activa"]   # familia ACTIVA, no "alguna condición"
+        res = resumen_activo(t, c, fam, resultado.get("pausa_sistema"), al_dia(t, "btc"), diario_al_dia(t, "btc"))
+        res["confirmacion_semanas_seguidas_activa"] = intenta(
+            fallos, "btc_semanas_confirmacion", semanas_confirmacion_btc, p_btc, hash_rate)
         resultado["btc"].update({
-            "resumen": resumen_activo(t, c, fam, resultado.get("pausa_sistema"), al_dia(t, "btc"),
-                                      diario_al_dia(t, "btc")),
-            "tendencia": t, "ciclo": c, "onchain": oc, "derivados": der,
+            "resumen": res,
+            "tendencia": t, "ciclo": c, "suelo": suelo(p_btc), "onchain": oc, "derivados": der,
             "fundamentales": fundamentales_btc(mercado, dir_salida, fecha, fallos), "familias": fam,
-            "resolucion_eventos": resolucion_eventos(semanal(p_btc))})
+            "resolucion_eventos": resolucion_eventos(semanal(p_btc)),
+            "resolucion_ciclo": resolucion_ciclo(semanal(p_btc)),
+            "frecuencia_historica_eventos": frecuencia_eventos(semanal(p_btc))})
     if p_sol is not None:
         spot = intenta(fallos, "kraken_sol", kraken_precio, "SOLUSD")
         spot = validar_precio(p_sol, "sol", ahora, fallos, spot)
@@ -1227,13 +1409,15 @@ def construir(ahora: datetime, dir_salida: Path) -> dict:
             ratio_pct = pct((r52 <= ratio.iloc[-1]).mean() * 100, 1)
             rel = {"ratio_sol_btc": n(ratio.iloc[-1], 6), "percentil_52s": ratio_pct,
                    "minimo_52s": n(r52.min(), 6), "maximo_52s": n(r52.max(), 6)}
-        fam = familias_sol(t, ratio_pct, sd, der, sent, confirmacion_btc)
+        fam = familias_sol(t, ratio_pct, sd, der, sent, confirmacion_btc, p_sol)
         c = ciclo(p_sol)
         resultado["sol"] = {"resumen": resumen_activo(t, c, fam, resultado.get("pausa_sistema"), al_dia(t, "sol"),
                                                       diario_al_dia(t, "sol")),
-                            "tendencia": t, "ciclo": c, "ratio_sol_btc": rel,
+                            "tendencia": t, "ciclo": c, "suelo": suelo(p_sol), "ratio_sol_btc": rel,
                             "derivados": der, "fundamentales": sd, "familias": fam,
-                            "resolucion_eventos": resolucion_eventos(semanal(p_sol))}
+                            "resolucion_eventos": resolucion_eventos(semanal(p_sol)),
+                            "resolucion_ciclo": resolucion_ciclo(semanal(p_sol)),
+                            "frecuencia_historica_eventos": frecuencia_eventos(semanal(p_sol))}
 
     resultado["otras_monedas"] = {
         "nota": "Activos cesta: sus tramos siguen a los de SOL según la política; aquí van sus hechos propios.",
@@ -1254,7 +1438,9 @@ def construir(ahora: datetime, dir_salida: Path) -> dict:
         "fallos_criticos": criticos,
         "fallos": fallos.items,
         "avisos": avisos,
-        "aviso": "Solo datos y condiciones objetivas. Lo que no aparece es SIN DATO.",
+        "aviso": "Solo datos y condiciones objetivas. Lo que no aparece es SIN DATO. En cada condición "
+                 "sin evaluar, sin_dato_motivo dice si es sin_fuente (no cuenta) o fuente_caida (cuenta "
+                 "como no cumplida). 'activa' aplica la sección 3 de la política v1.1.",
         "ultimo_domingo_cerrado": domingo.strftime("%Y-%m-%d"),
         "cambios_desde_archivo_anterior": cambios(resultado, anterior),
         "cambios_desde_hace_7_dias": cambios(resultado, semana),
@@ -1279,6 +1465,19 @@ def tabla(titulo: str, d: dict) -> list[str]:
         if k.startswith("ultimos_") and v:
             filas.append(f"\n{k}: " + ", ".join(f"{f} = {x}" for f, x in v.items()))
     return filas
+
+
+def estado_familia(f: dict) -> str:
+    if f["activa"] is None:
+        return "NO EVALUABLE"
+    return ("ACTIVA" if f["activa"] else "no activa") + (" (BASE DÉBIL)" if f["activa"] and f["base_debil"] else "")
+
+
+def marca_condicion(c: dict) -> str:
+    if c["cumple"] is None:
+        return {"sin_fuente": "SIN FUENTE (no cuenta)",
+                "fuente_caida": "FUENTE CAÍDA (cuenta como no cumple)"}[c["sin_dato_motivo"]]
+    return "cumple" if c["cumple"] else "no cumple"
 
 
 def a_markdown(doc: dict) -> str:
@@ -1306,14 +1505,24 @@ def a_markdown(doc: dict) -> str:
         o.append(f"\n## {activo.upper()}")
         if a.get("resumen"):
             o += tabla("Resumen para Estrategia", a["resumen"])
-        for clave in ("tendencia", "ciclo", "onchain", "derivados", "ratio_sol_btc", "fundamentales"):
+        for clave in ("tendencia", "ciclo", "suelo", "onchain", "derivados", "ratio_sol_btc", "fundamentales"):
             if a.get(clave):
                 o += tabla(clave.capitalize(), a[clave])
         for nombre, f in (a.get("familias") or {}).items():
-            o.append(f"\n### Familia {nombre}: {f['cumplidas']} de {f['medibles']} medibles ({f['total']} en total)\n")
+            o.append(f"\n### Familia {nombre}: {estado_familia(f)} · {f['cumplidas']} cumplidas, "
+                     f"{f['con_fuente']} con fuente ({f['total']} en total)\n")
             for c in f["condiciones"]:
-                marca = {True: "cumple", False: "no cumple", None: SIN_DATO}[c["cumple"]]
-                o.append(f"- {c['condicion']}: {marca}")
+                o.append(f"- {c['condicion']}: {marca_condicion(c)}")
+        fr = a.get("frecuencia_historica_eventos") or {}
+        if fr:
+            o.append(f"\n### Frecuencia histórica de los eventos (desde {fr['desde']})\n")
+            for e in ("evento_4s", "evento_8s"):
+                o.append(f"- {e}: ocurrió el {fr[e]['ocurrio_pct']} % de {fr[e]['semanas_resueltas']} semanas resueltas")
+        rc = a.get("resolucion_ciclo") or {}
+        if rc:
+            o.append("\n### Resolución del evento de ciclo\n\n| Semana | Mínimo de referencia | A | B | C |\n|---|---|---|---|---|")
+            for fecha, r in rc.items():
+                o.append(f"| {fecha} | {r['minimo_referencia_usd']} | {r['A']} | {r['B']} | {r['C']} |")
         res = a.get("resolucion_eventos") or {}
         if res:
             o.append("\n### Resolución de eventos (últimas 30 semanas)\n\n| Cierre | USD | Evento 4 s | Evento 8 s |\n|---|---|---|---|")
@@ -1340,10 +1549,10 @@ def a_markdown(doc: dict) -> str:
             if a.get(clave):
                 o += tabla(f"{m} {clave}", a[clave])
         for nombre, fm in (a.get("familias") or {}).items():
-            o.append(f"\n### {m} familia {nombre}: {fm['cumplidas']} de {fm['medibles']} medibles ({fm['total']} en total)\n")
+            o.append(f"\n### {m} familia {nombre}: {estado_familia(fm)} · {fm['cumplidas']} cumplidas, "
+                     f"{fm['con_fuente']} con fuente ({fm['total']} en total)\n")
             for cnd in fm["condiciones"]:
-                marca = {True: "cumple", False: "no cumple", None: SIN_DATO}[cnd["cumple"]]
-                o.append(f"- {cnd['condicion']}: {marca}")
+                o.append(f"- {cnd['condicion']}: {marca_condicion(cnd)}")
     o.append("\n## Macro\n\n| Dato | Valor | Fecha | Var. 30 d % | Fuente |\n|---|---|---|---|---|")
     for k, v in doc["macro"].items():
         o.append(f"| {k} | {v['valor']} | {v['fecha']} | {v.get('var_30d_pct')} | {v['fuente']} |")
