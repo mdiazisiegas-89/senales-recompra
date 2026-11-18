@@ -1,25 +1,21 @@
-# Señales 2026-11-17
+# Señales 2026-11-18
 
-- Snapshot: `31998649be01`
+- Snapshot: `0136b4baaaad`
 - Estado: **OK**
-- Generado: 2026-11-17T06:04:23Z
-- Válido hasta: 2026-11-18T18:04:23Z
+- Generado: 2026-11-18T06:08:53Z
+- Válido hasta: 2026-11-19T18:08:53Z
 - Aviso: Precio realizado tomado de Coin Metrics CapMVRVCur. Antes fallaron: Coin Metrics CapRealUSD: HTTPError: 403 Client Error: Forbidden for url: https://community-api.coinmetrics.io/v4/timeseries/as
 
 ## Cambios desde el archivo anterior
 
-- btc.capitulacion.LTH-SOPR < 1: True → False
-- sol.valoracion.ratio SOL/BTC en mínimos del rango de 52 semanas: False → True
-- sol.valoracion.ACTIVA: False → True
-- sol.derivados.funding medio de 7 días negativo: True → False
+- sol.valoracion.ratio SOL/BTC en mínimos del rango de 52 semanas: True → False
+- sol.valoracion.ACTIVA: True → False
 
 ## Cambios en los últimos 7 días
 
 - btc.valoracion.precio bajo realized price (mismo hecho que MVRV Z < 0 y NUPL < 0): SIN DATO → False
-- btc.valoracion.precio cerca o bajo la media de 200 semanas: False → True
 - btc.valoracion.caída desde el máximo de al menos 50 % (último cierre semanal): SIN DATO → False
 - btc.valoracion.ACTIVA: SIN DATO → False
-- btc.capitulacion.LTH-SOPR < 1: True → False
 - btc.capitulacion.ACTIVA: SIN DATO → False
 - btc.derivados.ACTIVA: SIN DATO → False
 - btc.sentimiento.ACTIVA: SIN DATO → False
@@ -27,8 +23,7 @@
 - btc.confirmacion.ACTIVA: SIN DATO → False
 - btc.suelo.validado: SIN DATO → True
 - btc.suelo.fecha_minimo: SIN DATO → 2026-06-28
-- sol.valoracion.ratio SOL/BTC en mínimos del rango de 52 semanas: False → True
-- sol.valoracion.ACTIVA: SIN DATO → True
+- sol.valoracion.ACTIVA: SIN DATO → False
 - sol.capitulacion.ACTIVA: SIN DATO → False
 - sol.derivados.ACTIVA: SIN DATO → False
 - sol.sentimiento.ACTIVA: SIN DATO → False
@@ -44,8 +39,8 @@
 
 | Dato | Valor |
 |---|---|
-| precio_referencia_usd | 64942.51 |
-| precio_referencia_fecha | 2026-11-16 |
+| precio_referencia_usd | 64908.18 |
+| precio_referencia_fecha | 2026-11-17 |
 | dato_diario_al_dia | True |
 | cierre_semanal_usd | 65189.11 |
 | cierre_semanal_fecha | 2026-11-15 |
@@ -61,33 +56,33 @@
 
 | Dato | Valor |
 |---|---|
-| fecha_ultimo_dato | 2026-11-16 |
+| fecha_ultimo_dato | 2026-11-17 |
 | fecha_ultimo_cierre_semanal | 2026-11-15 |
-| precio_referencia_usd | 64942.51 |
+| precio_referencia_usd | 64908.18 |
 | cierre_semanal_usd | 65189.11 |
 | var_semanal_pct | -13.04 |
-| var_7d_pct | -13.6 |
-| var_30d_pct | -20.09 |
-| sma50d | 79360.0 |
-| sma200d | 72858.41 |
+| var_7d_pct | -11.88 |
+| var_30d_pct | -20.78 |
+| sma50d | 78987.82 |
+| sma200d | 72792.28 |
 | sma50d_sobre_sma200d | True |
-| sma20w | 73842.75 |
-| ema21w | 75499.62 |
+| sma20w | 73842.73 |
+| ema21w | 75499.58 |
 | sma200w | 67967.08 |
 | cierre_sobre_sma20w | False |
-| rsi14_diario | 23.93 |
+| rsi14_diario | 23.89 |
 | rsi14_semanal | 38.57 |
-| macd_semanal | 486.78 |
-| macd_semanal_senal | 874.53 |
+| macd_semanal | 486.75 |
+| macd_semanal_senal | 874.52 |
 | ultimo_cierre_mensual_fecha | 2026-10-31 |
 | ultimo_cierre_mensual_usd | 77401.02 |
 | var_mensual_pct | -7.39 |
 | ultimo_cierre_anual_fecha | 2025-12-31 |
 | ultimo_cierre_anual_usd | 87516.98 |
 | var_anual_pct | -6.29 |
-| precio_kraken_contraste_usd | 64741.3 |
+| precio_kraken_contraste_usd | 64605.8 |
 
-ultimos_30_cierres_semanales: 2026-04-26 = 78538.77, 2026-05-03 = 78649.17, 2026-05-10 = 82256.78, 2026-05-17 = 77497.7, 2026-05-24 = 76950.99, 2026-05-31 = 73599.56, 2026-06-07 = 63158.25, 2026-06-14 = 65615.33, 2026-06-21 = 63365.44, 2026-06-28 = 59516.67, 2026-07-05 = 63619.88, 2026-07-12 = 63752.27, 2026-07-19 = 64653.05, 2026-07-26 = 65328.79, 2026-08-02 = 63445.68, 2026-08-09 = 64864.93, 2026-08-16 = 62818.41, 2026-08-23 = 77593.03, 2026-08-30 = 77689.19, 2026-09-06 = 80319.97, 2026-09-13 = 76759.26, 2026-09-20 = 81194.74, 2026-09-27 = 84392.47, 2026-10-04 = 86520.8, 2026-10-11 = 83636.61, 2026-10-18 = 81935.17, 2026-10-25 = 80038.91, 2026-11-01 = 78135.08, 2026-11-08 = 74967.72, 2026-11-15 = 65189.11
+ultimos_30_cierres_semanales: 2026-04-26 = 78538.77, 2026-05-03 = 78649.17, 2026-05-10 = 82256.78, 2026-05-17 = 77497.7, 2026-05-24 = 76950.99, 2026-05-31 = 73599.56, 2026-06-07 = 63158.25, 2026-06-14 = 65615.33, 2026-06-21 = 63365.44, 2026-06-28 = 59516.67, 2026-07-05 = 63619.88, 2026-07-12 = 63752.27, 2026-07-19 = 64653.05, 2026-07-26 = 65328.79, 2026-08-02 = 63445.68, 2026-08-09 = 64864.93, 2026-08-16 = 62818.41, 2026-08-23 = 77593.03, 2026-08-30 = 77689.19, 2026-09-06 = 80319.97, 2026-09-13 = 76759.26, 2026-09-20 = 81194.74, 2026-09-27 = 84392.47, 2026-10-04 = 86520.8, 2026-10-11 = 83636.61, 2026-10-18 = 81935.17, 2026-10-25 = 80038.91, 2026-11-01 = 78135.08, 2026-11-08 = 74967.26, 2026-11-15 = 65189.11
 
 ultimos_24_cierres_mensuales: 2024-11-30 = 96463.62, 2024-12-31 = 93389.73, 2025-01-31 = 102263.04, 2025-02-28 = 84243.78, 2025-03-31 = 82461.45, 2025-04-30 = 94236.73, 2025-05-31 = 104708.96, 2025-06-30 = 107153.1, 2025-07-31 = 115848.34, 2025-08-31 = 108316.45, 2025-09-30 = 113971.74, 2025-10-31 = 109554.24, 2025-11-30 = 90607.7, 2025-12-31 = 87516.98, 2026-01-31 = 78702.39, 2026-02-28 = 66965.64, 2026-03-31 = 68214.87, 2026-04-30 = 76299.62, 2026-05-31 = 73599.56, 2026-06-30 = 58525.08, 2026-07-31 = 62875.18, 2026-08-31 = 78533.89, 2026-09-30 = 83579.67, 2026-10-31 = 77401.02
 
@@ -125,30 +120,30 @@ ultimos_10_cierres_anuales: 2016-12-31 = 968.97, 2017-12-31 = 13921.48, 2018-12-
 
 | Dato | Valor |
 |---|---|
-| realized_price_usd | 53594.62 |
-| realized_price_fecha | 2026-11-16 |
+| realized_price_usd | 53559.08 |
+| realized_price_fecha | 2026-11-17 |
 | precio_bajo_realized | False |
 | mvrv | 1.212 |
-| mvrv_z | 0.367282 |
-| nupl | 0.174737 |
-| puell | 0.981985 |
+| mvrv_z | 0.367301 |
+| nupl | 0.174849 |
+| puell | 0.892087 |
 | hash_ribbons_30_bajo_60 | False |
-| hash_ribbons_dias_en_estado | 82 |
-| lth_sopr | 1.019 |
-| lth_sopr_fecha | 2026-11-10 |
+| hash_ribbons_dias_en_estado | 83 |
+| lth_sopr | 1.138 |
+| lth_sopr_fecha | 2026-11-11 |
 | realized_fuente | Coin Metrics CapMVRVCur |
 
 ### Derivados
 
 | Dato | Valor |
 |---|---|
-| funding_medio_7d_pct_hora | 0.000881 |
-| funding_medio_7d_anualizado_pct | 7.7 |
-| funding_medio_14d_pct_hora | 0.001022 |
+| funding_medio_7d_pct_hora | 0.000863 |
+| funding_medio_7d_anualizado_pct | 7.6 |
+| funding_medio_14d_pct_hora | 0.001013 |
 | horas_funding_negativo_7d | 14 |
-| open_interest_usd | 2438968280.0 |
-| volumen_24h_usd | 3742937341.0 |
-| oi_var_7d_pct | -21.08 |
+| open_interest_usd | 2629625460.0 |
+| volumen_24h_usd | 3793006808.0 |
+| oi_var_7d_pct | -13.89 |
 | oi_var_30d_pct | SIN DATO |
 | fuente | Hyperliquid (un solo mercado, no agregado) |
 
@@ -156,17 +151,17 @@ ultimos_10_cierres_anuales: 2016-12-31 = 968.97, 2017-12-31 = 13921.48, 2018-12-
 
 | Dato | Valor |
 |---|---|
-| comisiones_media_7d_usd | 201950.0 |
-| comisiones_var_vs_30d_previos_pct | -3.06 |
+| comisiones_media_7d_usd | 197267.0 |
+| comisiones_var_vs_30d_previos_pct | -5.57 |
 | comisiones_fuente | DefiLlama red bitcoin |
-| mcap_usd | 1302417759832.0 |
-| fdv_usd | 1302417759832.0 |
-| oferta_circulante | 20113162.0 |
+| mcap_usd | 1300112849193.0 |
+| fdv_usd | 1300112849193.0 |
+| oferta_circulante | 20113584.0 |
 | fdv_sobre_mcap | 1.0 |
 | mcap_var_30d_pct | SIN DATO |
 | valoracion_base | comisiones de red (sin emisión) |
-| mcap_sobre_base_anualizada | 17669.1 |
-| mcap_sobre_base_percentil_365d | 27.3 |
+| mcap_sobre_base_anualizada | 18056.5 |
+| mcap_sobre_base_percentil_365d | 30.6 |
 | mcap_sobre_base_min_365d | 12124.7 |
 | mcap_sobre_base_max_365d | 25376.0 |
 | mercado_fuente | CoinGecko |
@@ -244,7 +239,7 @@ ultimos_10_cierres_anuales: 2016-12-31 = 968.97, 2017-12-31 = 13921.48, 2018-12-
 | 2026-10-18 | 81935.17 | False | pendiente |
 | 2026-10-25 | 80038.91 | False | pendiente |
 | 2026-11-01 | 78135.08 | False | pendiente |
-| 2026-11-08 | 74967.72 | False | pendiente |
+| 2026-11-08 | 74967.26 | False | pendiente |
 | 2026-11-15 | 65189.11 | pendiente | pendiente |
 
 ## SOL
@@ -253,8 +248,8 @@ ultimos_10_cierres_anuales: 2016-12-31 = 968.97, 2017-12-31 = 13921.48, 2018-12-
 
 | Dato | Valor |
 |---|---|
-| precio_referencia_usd | 71.39 |
-| precio_referencia_fecha | 2026-11-16 |
+| precio_referencia_usd | 75.04 |
+| precio_referencia_fecha | 2026-11-17 |
 | dato_diario_al_dia | True |
 | cierre_semanal_usd | 72.51 |
 | cierre_semanal_fecha | 2026-11-15 |
@@ -269,23 +264,23 @@ ultimos_10_cierres_anuales: 2016-12-31 = 968.97, 2017-12-31 = 13921.48, 2018-12-
 
 | Dato | Valor |
 |---|---|
-| fecha_ultimo_dato | 2026-11-16 |
+| fecha_ultimo_dato | 2026-11-17 |
 | fecha_ultimo_cierre_semanal | 2026-11-15 |
-| precio_referencia_usd | 71.39 |
+| precio_referencia_usd | 75.04 |
 | cierre_semanal_usd | 72.51 |
 | var_semanal_pct | -16.57 |
-| var_7d_pct | -17.48 |
-| var_30d_pct | -30.76 |
-| sma50d | 100.8 |
-| sma200d | 88.71 |
+| var_7d_pct | -9.74 |
+| var_30d_pct | -27.81 |
+| sma50d | 99.93 |
+| sma200d | 88.66 |
 | sma50d_sobre_sma200d | True |
 | sma20w | 93.16 |
 | ema21w | 94.67 |
 | sma200w | 113.87 |
 | cierre_sobre_sma20w | False |
-| rsi14_diario | 20.83 |
+| rsi14_diario | 29.45 |
 | rsi14_semanal | 37.53 |
-| macd_semanal | -0.42124 |
+| macd_semanal | -0.42142 |
 | macd_semanal_senal | 1.08 |
 | ultimo_cierre_mensual_fecha | 2026-10-31 |
 | ultimo_cierre_mensual_usd | 95.29 |
@@ -293,11 +288,11 @@ ultimos_10_cierres_anuales: 2016-12-31 = 968.97, 2017-12-31 = 13921.48, 2018-12-
 | ultimo_cierre_anual_fecha | 2025-12-31 |
 | ultimo_cierre_anual_usd | 124.58 |
 | var_anual_pct | -34.21 |
-| precio_kraken_contraste_usd | 72.58 |
+| precio_kraken_contraste_usd | 74.96 |
 
-ultimos_30_cierres_semanales: 2026-04-26 = 86.9, 2026-05-03 = 84.04, 2026-05-10 = 96.45, 2026-05-17 = 85.26, 2026-05-24 = 85.19, 2026-05-31 = 82.2, 2026-06-07 = 66.2, 2026-06-14 = 70.85, 2026-06-21 = 72.54, 2026-06-28 = 71.19, 2026-07-05 = 81.56, 2026-07-12 = 76.76, 2026-07-19 = 76.29, 2026-07-26 = 76.63, 2026-08-02 = 73.48, 2026-08-09 = 76.34, 2026-08-16 = 74.5, 2026-08-23 = 95.37, 2026-08-30 = 101.89, 2026-09-06 = 106.49, 2026-09-13 = 99.48, 2026-09-20 = 111.0, 2026-09-27 = 121.91, 2026-10-04 = 121.63, 2026-10-11 = 111.15, 2026-10-18 = 103.94, 2026-10-25 = 101.14, 2026-11-01 = 94.26, 2026-11-08 = 86.91, 2026-11-15 = 72.51
+ultimos_30_cierres_semanales: 2026-04-26 = 86.9, 2026-05-03 = 84.04, 2026-05-10 = 96.45, 2026-05-17 = 85.26, 2026-05-24 = 85.19, 2026-05-31 = 82.21, 2026-06-07 = 66.2, 2026-06-14 = 70.85, 2026-06-21 = 72.54, 2026-06-28 = 71.19, 2026-07-05 = 81.56, 2026-07-12 = 76.76, 2026-07-19 = 76.29, 2026-07-26 = 76.63, 2026-08-02 = 73.48, 2026-08-09 = 76.34, 2026-08-16 = 74.5, 2026-08-23 = 95.37, 2026-08-30 = 101.89, 2026-09-06 = 106.49, 2026-09-13 = 99.48, 2026-09-20 = 111.0, 2026-09-27 = 121.91, 2026-10-04 = 121.63, 2026-10-11 = 111.15, 2026-10-18 = 103.94, 2026-10-25 = 101.14, 2026-11-01 = 94.26, 2026-11-08 = 86.91, 2026-11-15 = 72.51
 
-ultimos_24_cierres_mensuales: 2024-11-30 = 238.17, 2024-12-31 = 189.36, 2025-01-31 = 231.1, 2025-02-28 = 147.72, 2025-03-31 = 124.99, 2025-04-30 = 147.76, 2025-05-31 = 156.77, 2025-06-30 = 155.13, 2025-07-31 = 172.34, 2025-08-31 = 201.43, 2025-09-30 = 208.58, 2025-10-31 = 187.36, 2025-11-30 = 135.07, 2025-12-31 = 124.58, 2026-01-31 = 105.31, 2026-02-28 = 84.3, 2026-03-31 = 83.0, 2026-04-30 = 82.99, 2026-05-31 = 82.2, 2026-06-30 = 73.47, 2026-07-31 = 72.81, 2026-08-31 = 103.03, 2026-09-30 = 118.08, 2026-10-31 = 95.29
+ultimos_24_cierres_mensuales: 2024-11-30 = 238.17, 2024-12-31 = 189.36, 2025-01-31 = 231.1, 2025-02-28 = 147.72, 2025-03-31 = 124.99, 2025-04-30 = 147.76, 2025-05-31 = 156.77, 2025-06-30 = 155.13, 2025-07-31 = 172.34, 2025-08-31 = 201.43, 2025-09-30 = 208.58, 2025-10-31 = 187.36, 2025-11-30 = 135.07, 2025-12-31 = 124.58, 2026-01-31 = 105.31, 2026-02-28 = 84.3, 2026-03-31 = 83.0, 2026-04-30 = 82.99, 2026-05-31 = 82.21, 2026-06-30 = 73.47, 2026-07-31 = 72.81, 2026-08-31 = 103.03, 2026-09-30 = 118.08, 2026-10-31 = 95.29
 
 ultimos_10_cierres_anuales: 2020-12-31 = 1.51, 2021-12-31 = 170.53, 2022-12-31 = 9.96, 2023-12-31 = 101.14, 2024-12-31 = 189.36, 2025-12-31 = 124.58
 
@@ -333,13 +328,13 @@ ultimos_10_cierres_anuales: 2020-12-31 = 1.51, 2021-12-31 = 170.53, 2022-12-31 =
 
 | Dato | Valor |
 |---|---|
-| funding_medio_7d_pct_hora | 0.000104 |
+| funding_medio_7d_pct_hora | 0.000101 |
 | funding_medio_7d_anualizado_pct | 0.9 |
-| funding_medio_14d_pct_hora | 0.000257 |
-| horas_funding_negativo_7d | 60 |
-| open_interest_usd | 324013561.0 |
-| volumen_24h_usd | 241160059.0 |
-| oi_var_7d_pct | -19.97 |
+| funding_medio_14d_pct_hora | 0.000161 |
+| horas_funding_negativo_7d | 59 |
+| open_interest_usd | 326400872.0 |
+| volumen_24h_usd | 299582487.0 |
+| oi_var_7d_pct | -14.92 |
 | oi_var_30d_pct | SIN DATO |
 | fuente | Hyperliquid (un solo mercado, no agregado) |
 
@@ -347,45 +342,45 @@ ultimos_10_cierres_anuales: 2020-12-31 = 1.51, 2021-12-31 = 170.53, 2022-12-31 =
 
 | Dato | Valor |
 |---|---|
-| ratio_sol_btc | 0.00109924088 |
-| percentil_52s | 6.6 |
+| ratio_sol_btc | 0.00115605773 |
+| percentil_52s | 24.2 |
 | minimo_52s | 0.00102131207 |
-| maximo_52s | 0.00159251247 |
+| maximo_52s | 0.00159251245 |
 
 ### Fundamentales
 
 | Dato | Valor |
 |---|---|
-| tvl_usd | 4686958488.0 |
-| tvl_fecha | 2026-11-16 |
-| tvl_usd_var_90d_pct | -2.78 |
-| tvl_en_sol_var_90d_pct | 4.96 |
-| fees_media_7d_usd | 430666.0 |
-| fees_var_vs_30d_previos_pct | -29.26 |
+| tvl_usd | 4706347680.0 |
+| tvl_fecha | 2026-11-17 |
+| tvl_usd_var_90d_pct | -3.31 |
+| tvl_en_sol_var_90d_pct | 9.97 |
+| fees_media_7d_usd | 431541.0 |
+| fees_var_vs_30d_previos_pct | -26.13 |
 | fees_fuente | DefiLlama red solana |
-| ingresos_red_media_7d_usd | 29716.0 |
-| ingresos_red_var_vs_30d_previos_pct | -56.69 |
+| ingresos_red_media_7d_usd | 31672.0 |
+| ingresos_red_var_vs_30d_previos_pct | -50.51 |
 | ingresos_red_fuente | DefiLlama red solana |
-| fees_apps_ecosistema_media_7d_usd | 8275415.0 |
-| fees_apps_ecosistema_var_vs_30d_previos_pct | -26.99 |
-| stablecoins_solana_usd | 14250603802.0 |
-| stablecoins_solana_var_30d_pct | -4.63 |
-| mcap_usd | 42946662986.0 |
-| fdv_usd | 46284971836.0 |
-| oferta_circulante | 591684155.0 |
+| fees_apps_ecosistema_media_7d_usd | 8247727.0 |
+| fees_apps_ecosistema_var_vs_30d_previos_pct | -26.46 |
+| stablecoins_solana_usd | 13885756915.0 |
+| stablecoins_solana_var_30d_pct | -6.7 |
+| mcap_usd | 44414075428.0 |
+| fdv_usd | 47866558560.0 |
+| oferta_circulante | 591739427.0 |
 | fdv_sobre_mcap | 1.08 |
 | mcap_var_30d_pct | SIN DATO |
 | valoracion_base | comisiones de red |
-| mcap_sobre_base_anualizada | 273.2 |
-| mcap_sobre_base_percentil_365d | 64.1 |
+| mcap_sobre_base_anualizada | 282.0 |
+| mcap_sobre_base_percentil_365d | 67.2 |
 | mcap_sobre_base_min_365d | 138.3 |
 | mcap_sobre_base_max_365d | 398.1 |
 | mercado_fuente | CoinGecko |
 
-### Familia valoracion: ACTIVA · 2 cumplidas, 3 con fuente (3 en total)
+### Familia valoracion: no activa · 1 cumplidas, 3 con fuente (3 en total)
 
 - precio bajo la media de 200 semanas: cumple
-- ratio SOL/BTC en mínimos del rango de 52 semanas: cumple
+- ratio SOL/BTC en mínimos del rango de 52 semanas: no cumple
 - capitalización / comisiones de red en el 20 % más bajo de 12 meses: no cumple
 
 ### Familia capitulacion: no activa · 0 cumplidas, 1 con fuente (2 en total)
@@ -430,7 +425,7 @@ ultimos_10_cierres_anuales: 2020-12-31 = 1.51, 2021-12-31 = 170.53, 2022-12-31 =
 | 2026-05-10 | 96.45 | False | True |
 | 2026-05-17 | 85.26 | False | True |
 | 2026-05-24 | 85.19 | False | pendiente |
-| 2026-05-31 | 82.2 | False | pendiente |
+| 2026-05-31 | 82.21 | False | pendiente |
 | 2026-06-07 | 66.2 | True | pendiente |
 | 2026-06-14 | 70.85 | True | pendiente |
 | 2026-06-21 | 72.54 | True | pendiente |
@@ -477,8 +472,8 @@ Fuente de precio: Hyperliquid, perpetuo (no es precio spot). Datos desde 2023-05
 
 | Dato | Valor |
 |---|---|
-| precio_referencia_usd | 0.71962 |
-| precio_referencia_fecha | 2026-11-16 |
+| precio_referencia_usd | 0.73849 |
+| precio_referencia_fecha | 2026-11-17 |
 | dato_diario_al_dia | True |
 | cierre_semanal_usd | 0.73737 |
 | cierre_semanal_fecha | 2026-11-15 |
@@ -486,27 +481,27 @@ Fuente de precio: Hyperliquid, perpetuo (no es precio spot). Datos desde 2023-05
 | caida_desde_maximo_pct | -85.96 |
 | rebote_desde_minimo_pct | 9.91 |
 
-Techo ratio/BTC: percentil 17.0 (umbral 80) → no supera
+Techo ratio/BTC: percentil 21.7 (umbral 80) → no supera
 
 ### SUI tendencia
 
 | Dato | Valor |
 |---|---|
-| fecha_ultimo_dato | 2026-11-16 |
+| fecha_ultimo_dato | 2026-11-17 |
 | fecha_ultimo_cierre_semanal | 2026-11-15 |
-| precio_referencia_usd | 0.71962 |
+| precio_referencia_usd | 0.73849 |
 | cierre_semanal_usd | 0.73737 |
 | var_semanal_pct | -10.12 |
-| var_7d_pct | -14.82 |
-| var_30d_pct | -26.24 |
-| sma50d | 0.97496 |
-| sma200d | 0.8559 |
+| var_7d_pct | -10.32 |
+| var_30d_pct | -25.9 |
+| sma50d | 0.96636 |
+| sma200d | 0.85501 |
 | sma50d_sobre_sma200d | True |
 | sma20w | 0.84833 |
 | ema21w | 0.90716 |
 | sma200w | SIN DATO |
 | cierre_sobre_sma20w | False |
-| rsi14_diario | 32.06 |
+| rsi14_diario | 35.21 |
 | rsi14_semanal | 42.33 |
 | macd_semanal | -0.041884 |
 | macd_semanal_senal | -0.05608 |
@@ -516,7 +511,7 @@ Techo ratio/BTC: percentil 17.0 (umbral 80) → no supera
 | ultimo_cierre_anual_fecha | 2025-12-31 |
 | ultimo_cierre_anual_usd | 1.4 |
 | var_anual_pct | -65.92 |
-| precio_spot_contraste_usd | 0.7235 |
+| precio_spot_contraste_usd | 0.7306 |
 | precio_spot_contraste_fuente | Kraken |
 
 ultimos_30_cierres_semanales: 2026-04-26 = 0.9449, 2026-05-03 = 0.91949, 2026-05-10 = 1.33, 2026-05-17 = 1.04, 2026-05-24 = 1.03, 2026-05-31 = 0.895, 2026-06-07 = 0.75876, 2026-06-14 = 0.80314, 2026-06-21 = 0.69321, 2026-06-28 = 0.68111, 2026-07-05 = 0.75645, 2026-07-12 = 0.73624, 2026-07-19 = 0.74977, 2026-07-26 = 0.72288, 2026-08-02 = 0.68937, 2026-08-09 = 0.68616, 2026-08-16 = 0.67086, 2026-08-23 = 0.85106, 2026-08-30 = 0.7116, 2026-09-06 = 0.81249, 2026-09-13 = 0.70156, 2026-09-20 = 0.89853, 2026-09-27 = 1.26, 2026-10-04 = 1.21, 2026-10-11 = 1.13, 2026-10-18 = 0.99663, 2026-10-25 = 0.91984, 2026-11-01 = 0.90083, 2026-11-08 = 0.82041, 2026-11-15 = 0.73737
@@ -541,9 +536,9 @@ ultimos_10_cierres_anuales: 2023-12-31 = 0.77657, 2024-12-31 = 4.12, 2025-12-31 
 
 | Dato | Valor |
 |---|---|
-| ratio_btc | 1.108087747347e-05 |
-| percentil_52s | 17.0 |
-| percentil_desde_listado | 5.5 |
+| ratio_btc | 1.13774572215e-05 |
+| percentil_52s | 21.7 |
+| percentil_desde_listado | 7.0 |
 | minimo_52s | 9.07291618781e-06 |
 | maximo_52s | 2.034640133263e-05 |
 
@@ -551,10 +546,10 @@ ultimos_10_cierres_anuales: 2023-12-31 = 0.77657, 2024-12-31 = 4.12, 2025-12-31 
 
 | Dato | Valor |
 |---|---|
-| tvl_usd | 373018302.0 |
-| tvl_fecha | 2026-11-16 |
-| tvl_usd_var_90d_pct | -7.79 |
-| tvl_nativo_var_90d_pct | -16.56 |
+| tvl_usd | 367941369.0 |
+| tvl_fecha | 2026-11-17 |
+| tvl_usd_var_90d_pct | -9.02 |
+| tvl_nativo_var_90d_pct | -12.97 |
 | tvl_fuente | DefiLlama Sui |
 | fees_media_7d_usd | 3233.0 |
 | fees_var_vs_30d_previos_pct | -14.13 |
@@ -562,16 +557,16 @@ ultimos_10_cierres_anuales: 2023-12-31 = 0.77657, 2024-12-31 = 4.12, 2025-12-31 
 | ingresos_media_7d_usd | 34.0 |
 | ingresos_var_vs_30d_previos_pct | -75.6 |
 | ingresos_fuente | DefiLlama red sui |
-| fees_apps_ecosistema_media_7d_usd | 118078.0 |
-| fees_apps_ecosistema_var_vs_30d_previos_pct | 13.31 |
-| mcap_usd | 2996364917.0 |
-| fdv_usd | 7239268893.0 |
+| fees_apps_ecosistema_media_7d_usd | 111602.0 |
+| fees_apps_ecosistema_var_vs_30d_previos_pct | 6.76 |
+| mcap_usd | 3024656263.0 |
+| fdv_usd | 7307621267.0 |
 | oferta_circulante | 4139043544.0 |
 | fdv_sobre_mcap | 2.42 |
 | mcap_var_30d_pct | SIN DATO |
 | valoracion_base | comisiones de red |
-| mcap_sobre_base_anualizada | 2539.0 |
-| mcap_sobre_base_percentil_365d | 70.6 |
+| mcap_sobre_base_anualizada | 2562.9 |
+| mcap_sobre_base_percentil_365d | 71.0 |
 | mcap_sobre_base_min_365d | 412.6 |
 | mcap_sobre_base_max_365d | 5006.1 |
 | mercado_fuente | CoinGecko |
@@ -580,19 +575,19 @@ ultimos_10_cierres_anuales: 2023-12-31 = 0.77657, 2024-12-31 = 4.12, 2025-12-31 
 
 | Dato | Valor |
 |---|---|
-| funding_medio_7d_pct_hora | -0.000449 |
+| funding_medio_7d_pct_hora | -0.000443 |
 | funding_medio_7d_anualizado_pct | -3.9 |
-| funding_medio_14d_pct_hora | 0.000124 |
-| horas_funding_negativo_7d | 91 |
-| open_interest_usd | 15361678.0 |
-| volumen_24h_usd | 4468881.0 |
-| oi_var_7d_pct | -37.99 |
+| funding_medio_14d_pct_hora | 5e-05 |
+| horas_funding_negativo_7d | 89 |
+| open_interest_usd | 15211292.0 |
+| volumen_24h_usd | 4942991.0 |
+| oi_var_7d_pct | -36.77 |
 | oi_var_30d_pct | SIN DATO |
 | fuente | Hyperliquid (un solo mercado, no agregado) |
 
 ### SUI familia valoracion_relativa: no activa · 1 cumplidas, 4 con fuente (4 en total)
 
-- ratio frente a BTC en el 20 % inferior de 52 semanas: cumple
+- ratio frente a BTC en el 20 % inferior de 52 semanas: no cumple
 - precio bajo la media de 200 días: cumple
 - caída desde su máximo de al menos 70 %: cumple
 - capitalización / comisiones de red en el 20 % más bajo de 12 meses: no cumple
@@ -614,8 +609,8 @@ Fuente de precio: Hyperliquid, perpetuo (no es precio spot). Datos desde 2024-12
 
 | Dato | Valor |
 |---|---|
-| precio_referencia_usd | 69.73 |
-| precio_referencia_fecha | 2026-11-16 |
+| precio_referencia_usd | 70.0 |
+| precio_referencia_fecha | 2026-11-17 |
 | dato_diario_al_dia | True |
 | cierre_semanal_usd | 68.08 |
 | cierre_semanal_fecha | 2026-11-15 |
@@ -623,27 +618,27 @@ Fuente de precio: Hyperliquid, perpetuo (no es precio spot). Datos desde 2024-12
 | caida_desde_maximo_pct | -27.38 |
 | rebote_desde_minimo_pct | 0.0 |
 
-Techo ratio/BTC: percentil 89.3 (umbral 80) → SUPERA
+Techo ratio/BTC: percentil 90.1 (umbral 80) → SUPERA
 
 ### HYPE tendencia
 
 | Dato | Valor |
 |---|---|
-| fecha_ultimo_dato | 2026-11-16 |
+| fecha_ultimo_dato | 2026-11-17 |
 | fecha_ultimo_cierre_semanal | 2026-11-15 |
-| precio_referencia_usd | 69.73 |
+| precio_referencia_usd | 70.0 |
 | cierre_semanal_usd | 68.08 |
 | var_semanal_pct | -8.55 |
-| var_7d_pct | -7.14 |
-| var_30d_pct | -10.53 |
-| sma50d | 81.31 |
-| sma200d | 69.34 |
+| var_7d_pct | -3.08 |
+| var_30d_pct | -11.18 |
+| sma50d | 80.96 |
+| sma200d | 69.48 |
 | sma50d_sobre_sma200d | True |
 | sma20w | 74.92 |
 | ema21w | 73.51 |
 | sma200w | SIN DATO |
 | cierre_sobre_sma20w | False |
-| rsi14_diario | 38.51 |
+| rsi14_diario | 39.05 |
 | rsi14_semanal | 48.75 |
 | macd_semanal | 6.78 |
 | macd_semanal_senal | 8.93 |
@@ -653,7 +648,7 @@ Techo ratio/BTC: percentil 89.3 (umbral 80) → SUPERA
 | ultimo_cierre_anual_fecha | 2025-12-31 |
 | ultimo_cierre_anual_usd | 25.45 |
 | var_anual_pct | 5.77 |
-| precio_spot_contraste_usd | 70.09 |
+| precio_spot_contraste_usd | 68.95 |
 | precio_spot_contraste_fuente | Hyperliquid spot |
 
 ultimos_30_cierres_semanales: 2026-04-26 = 42.46, 2026-05-03 = 41.55, 2026-05-10 = 43.01, 2026-05-17 = 45.69, 2026-05-24 = 62.74, 2026-05-31 = 72.05, 2026-06-07 = 59.75, 2026-06-14 = 63.92, 2026-06-21 = 66.9, 2026-06-28 = 61.4, 2026-07-05 = 71.33, 2026-07-12 = 67.29, 2026-07-19 = 61.11, 2026-07-26 = 59.59, 2026-08-02 = 52.53, 2026-08-09 = 53.83, 2026-08-16 = 57.1, 2026-08-23 = 82.37, 2026-08-30 = 79.99, 2026-09-06 = 87.94, 2026-09-13 = 77.26, 2026-09-20 = 93.75, 2026-09-27 = 91.72, 2026-10-04 = 90.57, 2026-10-11 = 86.65, 2026-10-18 = 78.81, 2026-10-25 = 76.22, 2026-11-01 = 87.84, 2026-11-08 = 74.44, 2026-11-15 = 68.08
@@ -678,9 +673,9 @@ ultimos_10_cierres_anuales: 2024-12-31 = 24.06, 2025-12-31 = 25.45
 
 | Dato | Valor |
 |---|---|
-| ratio_btc | 0.001073749684528 |
-| percentil_52s | 89.3 |
-| percentil_desde_listado | 94.5 |
+| ratio_btc | 0.001078492786465 |
+| percentil_52s | 90.1 |
+| percentil_desde_listado | 95.0 |
 | minimo_52s | 0.0002377472471846 |
 | maximo_52s | 0.001166703118615 |
 
@@ -688,25 +683,25 @@ ultimos_10_cierres_anuales: 2024-12-31 = 24.06, 2025-12-31 = 25.45
 
 | Dato | Valor |
 |---|---|
-| tvl_usd | 2238282946.0 |
-| tvl_fecha | 2026-11-16 |
-| tvl_usd_var_90d_pct | 78.49 |
-| tvl_nativo_var_90d_pct | 49.68 |
+| tvl_usd | 2280784564.0 |
+| tvl_fecha | 2026-11-17 |
+| tvl_usd_var_90d_pct | 83.29 |
+| tvl_nativo_var_90d_pct | 82.62 |
 | tvl_fuente | DefiLlama Hyperliquid L1 |
-| fees_media_7d_usd | 3512559.0 |
-| fees_var_vs_30d_previos_pct | 26.65 |
+| fees_media_7d_usd | 3520334.0 |
+| fees_var_vs_30d_previos_pct | 24.38 |
 | fees_fuente | DefiLlama protocolo hyperliquid-perps |
-| ingresos_media_7d_usd | 2701079.0 |
-| ingresos_var_vs_30d_previos_pct | 24.82 |
+| ingresos_media_7d_usd | 2709300.0 |
+| ingresos_var_vs_30d_previos_pct | 23.11 |
 | ingresos_fuente | DefiLlama protocolo hyperliquid-perps |
-| mcap_usd | 16645989809.0 |
-| fdv_usd | 66509640412.0 |
-| oferta_circulante | 237730949.0 |
+| mcap_usd | 16387146768.0 |
+| fdv_usd | 65480237767.0 |
+| oferta_circulante | 237707639.0 |
 | fdv_sobre_mcap | 4.0 |
 | mcap_var_30d_pct | SIN DATO |
 | valoracion_base | ingresos del protocolo |
-| mcap_sobre_base_anualizada | 16.9 |
-| mcap_sobre_base_percentil_365d | 38.6 |
+| mcap_sobre_base_anualizada | 16.6 |
+| mcap_sobre_base_percentil_365d | 36.9 |
 | mcap_sobre_base_min_365d | 6.0 |
 | mcap_sobre_base_max_365d | 42.4 |
 | mercado_fuente | CoinGecko |
@@ -715,13 +710,13 @@ ultimos_10_cierres_anuales: 2024-12-31 = 24.06, 2025-12-31 = 25.45
 
 | Dato | Valor |
 |---|---|
-| funding_medio_7d_pct_hora | 0.000963 |
-| funding_medio_7d_anualizado_pct | 8.4 |
-| funding_medio_14d_pct_hora | 0.001003 |
-| horas_funding_negativo_7d | 22 |
-| open_interest_usd | 1322951202.0 |
-| volumen_24h_usd | 812569066.0 |
-| oi_var_7d_pct | -16.77 |
+| funding_medio_7d_pct_hora | 0.000983 |
+| funding_medio_7d_anualizado_pct | 8.6 |
+| funding_medio_14d_pct_hora | 0.000988 |
+| horas_funding_negativo_7d | 21 |
+| open_interest_usd | 1302697990.0 |
+| volumen_24h_usd | 451900643.0 |
+| oi_var_7d_pct | -16.76 |
 | oi_var_30d_pct | SIN DATO |
 | fuente | Hyperliquid (un solo mercado, no agregado) |
 
@@ -749,8 +744,8 @@ Fuente de precio: Hyperliquid, perpetuo (no es precio spot). Datos desde 2025-07
 
 | Dato | Valor |
 |---|---|
-| precio_referencia_usd | 0.002836 |
-| precio_referencia_fecha | 2026-11-16 |
+| precio_referencia_usd | 0.00282 |
+| precio_referencia_fecha | 2026-11-17 |
 | dato_diario_al_dia | True |
 | cierre_semanal_usd | 0.00297 |
 | cierre_semanal_fecha | 2026-11-15 |
@@ -758,27 +753,27 @@ Fuente de precio: Hyperliquid, perpetuo (no es precio spot). Datos desde 2025-07
 | caida_desde_maximo_pct | -62.99 |
 | rebote_desde_minimo_pct | 106.54 |
 
-Techo ratio/BTC: percentil 74.7 (umbral 80) → no supera
+Techo ratio/BTC: percentil 73.9 (umbral 80) → no supera
 
 ### PUMP tendencia
 
 | Dato | Valor |
 |---|---|
-| fecha_ultimo_dato | 2026-11-16 |
+| fecha_ultimo_dato | 2026-11-17 |
 | fecha_ultimo_cierre_semanal | 2026-11-15 |
-| precio_referencia_usd | 0.002836 |
+| precio_referencia_usd | 0.00282 |
 | cierre_semanal_usd | 0.00297 |
 | var_semanal_pct | -15.77 |
-| var_7d_pct | -21.68 |
-| var_30d_pct | -34.73 |
-| sma50d | 0.0045913 |
-| sma200d | 0.0029995 |
+| var_7d_pct | -19.61 |
+| var_30d_pct | -32.28 |
+| sma50d | 0.0045491 |
+| sma200d | 0.0030046 |
 | sma50d_sobre_sma200d | True |
 | sma20w | 0.0036192 |
 | ema21w | 0.0036563 |
 | sma200w | SIN DATO |
 | cierre_sobre_sma20w | False |
-| rsi14_diario | 28.6 |
+| rsi14_diario | 28.4 |
 | rsi14_semanal | 45.44 |
 | macd_semanal | 0.00042697 |
 | macd_semanal_senal | 0.00055184 |
@@ -788,7 +783,7 @@ Techo ratio/BTC: percentil 74.7 (umbral 80) → no supera
 | ultimo_cierre_anual_fecha | 2025-12-31 |
 | ultimo_cierre_anual_usd | 0.001914 |
 | var_anual_pct | SIN DATO |
-| precio_spot_contraste_usd | 0.002754 |
+| precio_spot_contraste_usd | 0.002695 |
 | precio_spot_contraste_fuente | Kraken |
 
 ultimos_30_cierres_semanales: 2026-04-26 = 0.001761, 2026-05-03 = 0.001799, 2026-05-10 = 0.002192, 2026-05-17 = 0.001709, 2026-05-24 = 0.001737, 2026-05-31 = 0.0018, 2026-06-07 = 0.001527, 2026-06-14 = 0.001575, 2026-06-21 = 0.001465, 2026-06-28 = 0.001438, 2026-07-05 = 0.001631, 2026-07-12 = 0.001462, 2026-07-19 = 0.002001, 2026-07-26 = 0.002018, 2026-08-02 = 0.002086, 2026-08-09 = 0.002675, 2026-08-16 = 0.00267, 2026-08-23 = 0.005231, 2026-08-30 = 0.004474, 2026-09-06 = 0.004025, 2026-09-13 = 0.00347, 2026-09-20 = 0.004232, 2026-09-27 = 0.005164, 2026-10-04 = 0.006526, 2026-10-11 = 0.005634, 2026-10-18 = 0.004164, 2026-10-25 = 0.004231, 2026-11-01 = 0.004193, 2026-11-08 = 0.003526, 2026-11-15 = 0.00297
@@ -813,9 +808,9 @@ ultimos_10_cierres_anuales: 2025-12-31 = 0.001914
 
 | Dato | Valor |
 |---|---|
-| ratio_btc | 4.366939289452e-08 |
-| percentil_52s | 74.7 |
-| percentil_desde_listado | 73.7 |
+| ratio_btc | 4.344599028372e-08 |
+| percentil_52s | 73.9 |
+| percentil_desde_listado | 73.0 |
 | minimo_52s | 1.981320105183e-08 |
 | maximo_52s | 7.542694925441e-08 |
 
@@ -823,20 +818,20 @@ ultimos_10_cierres_anuales: 2025-12-31 = 0.001914
 
 | Dato | Valor |
 |---|---|
-| fees_media_7d_usd | 1233469.0 |
-| fees_var_vs_30d_previos_pct | -28.48 |
+| fees_media_7d_usd | 1256760.0 |
+| fees_var_vs_30d_previos_pct | -26.11 |
 | fees_fuente | DefiLlama protocolo pump.fun |
-| ingresos_media_7d_usd | 864229.0 |
-| ingresos_var_vs_30d_previos_pct | -29.47 |
+| ingresos_media_7d_usd | 883305.0 |
+| ingresos_var_vs_30d_previos_pct | -26.83 |
 | ingresos_fuente | DefiLlama protocolo pump.fun |
-| mcap_usd | 1264007445.0 |
-| fdv_usd | 2269158121.0 |
-| oferta_circulante | 458070284162.0 |
+| mcap_usd | 1232698088.0 |
+| fdv_usd | 2213410915.0 |
+| oferta_circulante | 457855591957.0 |
 | fdv_sobre_mcap | 1.8 |
 | mcap_var_30d_pct | SIN DATO |
 | valoracion_base | ingresos del protocolo |
-| mcap_sobre_base_anualizada | 4.0 |
-| mcap_sobre_base_percentil_365d | 57.3 |
+| mcap_sobre_base_anualizada | 3.8 |
+| mcap_sobre_base_percentil_365d | 50.4 |
 | mcap_sobre_base_min_365d | 2.0 |
 | mcap_sobre_base_max_365d | 6.9 |
 | mercado_fuente | CoinGecko |
@@ -845,13 +840,13 @@ ultimos_10_cierres_anuales: 2025-12-31 = 0.001914
 
 | Dato | Valor |
 |---|---|
-| funding_medio_7d_pct_hora | 0.000516 |
-| funding_medio_7d_anualizado_pct | 4.5 |
-| funding_medio_14d_pct_hora | 0.000606 |
-| horas_funding_negativo_7d | 34 |
-| open_interest_usd | 37462692.0 |
-| volumen_24h_usd | 26655718.0 |
-| oi_var_7d_pct | -33.65 |
+| funding_medio_7d_pct_hora | 0.000544 |
+| funding_medio_7d_anualizado_pct | 4.8 |
+| funding_medio_14d_pct_hora | 0.000597 |
+| horas_funding_negativo_7d | 32 |
+| open_interest_usd | 38173417.0 |
+| volumen_24h_usd | 24430797.0 |
+| oi_var_7d_pct | -32.79 |
 | oi_var_30d_pct | SIN DATO |
 | fuente | Hyperliquid (un solo mercado, no agregado) |
 
@@ -875,19 +870,19 @@ ultimos_10_cierres_anuales: 2025-12-31 = 0.001914
 
 | Dato | Valor | Fecha | Var. 30 d % | Fuente |
 |---|---|---|---|---|
-| tipo_real_10a_pct | 2.91 | 2026-11-13 | 2.46 | FRED DFII10 |
-| bono_10a_pct | 5.15 | 2026-11-13 | -0.77 | FRED DGS10 |
+| tipo_real_10a_pct | 2.92 | 2026-11-16 | 6.57 | FRED DFII10 |
+| bono_10a_pct | 5.12 | 2026-11-16 | 0.59 | FRED DGS10 |
 | dolar_amplio_fed_no_es_dxy | 122.65 | 2026-11-13 | 0.53 | FRED DTWEXBGS |
 | m2_eeuu_no_es_global_mm_usd | 23508.0 | 2026-10-05 | 1.06 | FRED WM2NS |
-| stablecoins_total_usd | 286413839842.0 | 2026-11-17 | -5.32 | DefiLlama |
+| stablecoins_total_usd | 286337435745.0 | 2026-11-18 | -5.34 | DefiLlama |
 
 ### Sentimiento
 
 | Dato | Valor |
 |---|---|
-| valor | 12.0 |
-| fecha | 2026-11-17 |
-| dias_seguidos_miedo_extremo | 5 |
+| valor | 11.0 |
+| fecha | 2026-11-18 |
+| dias_seguidos_miedo_extremo | 6 |
 | fuente | alternative.me |
 
 ## Eventos de calibración
